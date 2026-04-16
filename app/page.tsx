@@ -14,7 +14,6 @@ import { HeaderProvider } from "@/components/shared/header/HeaderContext";
 // Import hero section components
 import HomeHeroBackground from "@/components/app/(home)/sections/hero/Background/Background";
 import { BackgroundOuterPiece } from "@/components/app/(home)/sections/hero/Background/BackgroundOuterPiece";
-import HomeHeroBadge from "@/components/app/(home)/sections/hero/Badge/Badge";
 import HomeHeroPixi from "@/components/app/(home)/sections/hero/Pixi/Pixi";
 import HomeHeroTitle from "@/components/app/(home)/sections/hero/Title/Title";
 import HeroInputSubmitButton from "@/components/app/(home)/sections/hero-input/Button/Button";
@@ -24,8 +23,6 @@ import HeroInputSubmitButton from "@/components/app/(home)/sections/hero-input/B
 import HeaderBrandKit from "@/components/shared/header/BrandKit/BrandKit";
 import HeaderWrapper from "@/components/shared/header/Wrapper/Wrapper";
 import HeaderDropdownWrapper from "@/components/shared/header/Dropdown/Wrapper/Wrapper";
-import GithubIcon from "@/components/shared/header/Github/_svg/GithubIcon";
-import ButtonUI from "@/components/ui/shadcn/button"
 
 interface SearchResult {
   url: string;
@@ -233,20 +230,7 @@ export default function HomePage() {
               <div className="flex gap-24 items-center">
                 <HeaderBrandKit />
               </div>
-              <div className="flex gap-8">
-                <a
-                  className="contents"
-                  href="https://github.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="View CLONE! source"
-                >
-                  <ButtonUI variant="tertiary">
-                    <GithubIcon />
-                    View source
-                  </ButtonUI>
-                </a>
-              </div>
+              <div className="flex gap-8" />
             </div>
           </HeaderWrapper>
         </div>
@@ -273,11 +257,7 @@ export default function HomePage() {
             <HomeHeroBackground />
 
             <div className="relative container px-16">
-              <HomeHeroBadge />
               <HomeHeroTitle />
-              <p className="text-center text-body-large text-[var(--clone-text-dim)]">
-                Mirror any website into code. どんなサイトも、一瞬でコードに。
-              </p>
               <Link
                 className="bg-black-alpha-4 hover:bg-black-alpha-6 rounded-6 px-8 lg:px-6 text-label-large h-30 lg:h-24 block mt-8 mx-auto w-max gap-4 transition-all text-[var(--clone-text-dim)] hover:text-[var(--clone-cyan-100)]"
                 href="#"

@@ -27,9 +27,8 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CLONE! — Mirror any site into code",
-  description:
-    "CLONE! はどんなウェブサイトも一瞬で React コードに変換する AI ツール。Mirror any website into code.",
+  title: "CLONE!",
+  description: "CLONE! はどんなウェブサイトも一瞬で React コードに変換する AI ツール。",
 };
 
 export default function RootLayout({
