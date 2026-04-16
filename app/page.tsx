@@ -9,8 +9,6 @@ import { toast } from "sonner";
 
 // Import shared components
 import { Connector } from "@/components/shared/layout/curvy-rect";
-import HeroFlame from "@/components/shared/effects/flame/hero-flame";
-import AsciiExplosion from "@/components/shared/effects/flame/ascii-explosion";
 import { HeaderProvider } from "@/components/shared/header/HeaderContext";
 
 // Import hero section components
@@ -238,12 +236,14 @@ export default function HomePage() {
               <div className="flex gap-8">
                 <a
                   className="contents"
-                  href="https://github.com/mendableai/open-lovable"
+                  href="https://github.com/"
                   target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View CLONE! source"
                 >
                   <ButtonUI variant="tertiary">
                     <GithubIcon />
-                    Use this Template
+                    View source
                   </ButtonUI>
                 </a>
               </div>
@@ -254,23 +254,36 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="overflow-x-clip" id="home-hero">
           <div className="pt-28 lg:pt-254 lg:-mt-100 pb-115 relative" id="hero-content">
+            {/* CLONE! grid background — subtle dotted grid + radial fade */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 50% 30%, rgba(0,229,255,0.08), transparent 55%), radial-gradient(circle at 70% 80%, rgba(124,58,237,0.06), transparent 60%), radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)",
+                backgroundSize: "auto, auto, 24px 24px",
+                maskImage:
+                  "radial-gradient(ellipse at center, #000 40%, transparent 80%)",
+                WebkitMaskImage:
+                  "radial-gradient(ellipse at center, #000 40%, transparent 80%)",
+              }}
+            />
             <HomeHeroPixi />
-            <HeroFlame />
             <BackgroundOuterPiece />
             <HomeHeroBackground />
 
             <div className="relative container px-16">
               <HomeHeroBadge />
               <HomeHeroTitle />
-              <p className="text-center text-body-large">
-                Clone brand format or re-imagine any website, in seconds.
+              <p className="text-center text-body-large text-[var(--clone-text-dim)]">
+                Mirror any website into code. どんなサイトも、一瞬でコードに。
               </p>
               <Link
-                className="bg-black-alpha-4 hover:bg-black-alpha-6 rounded-6 px-8 lg:px-6 text-label-large h-30 lg:h-24 block mt-8 mx-auto w-max gap-4 transition-all"
+                className="bg-black-alpha-4 hover:bg-black-alpha-6 rounded-6 px-8 lg:px-6 text-label-large h-30 lg:h-24 block mt-8 mx-auto w-max gap-4 transition-all text-[var(--clone-text-dim)] hover:text-[var(--clone-cyan-100)]"
                 href="#"
                 onClick={(e) => e.preventDefault()}
               >
-                Powered by Firecrawl.
+                Built for the clone era.
               </Link>
             </div>
           </div>
@@ -286,16 +299,16 @@ export default function HomePage() {
 
             {/* Hero Input Component */}
             <div className="max-w-552 mx-auto z-[11] lg:z-[2]">
-              <div className="rounded-20 -mt-30 lg:-mt-30">
+              <div className="rounded-md -mt-30 lg:-mt-30">
                 <div
-                  className="bg-white rounded-20 relative z-10"
+                  className="bg-[var(--clone-surface)] rounded-md relative z-10 border border-[var(--clone-line)]"
                   style={{
                     boxShadow:
-                      "0px 0px 44px 0px rgba(0, 0, 0, 0.02), 0px 88px 56px -20px rgba(0, 0, 0, 0.03), 0px 56px 56px -20px rgba(0, 0, 0, 0.02), 0px 32px 32px -20px rgba(0, 0, 0, 0.03), 0px 16px 24px -12px rgba(0, 0, 0, 0.03), 0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 0px 0px 10px #F9F9F9",
+                      "0 0 0 1px rgba(0, 229, 255, 0.08), 0 24px 64px -24px rgba(0, 229, 255, 0.18), 0 12px 32px -16px rgba(0, 0, 0, 0.6)",
                   }}
                 >
 
-                <div className="p-[28px] flex gap-12 items-center w-full relative bg-white rounded-20">
+                <div className="p-[28px] flex gap-12 items-center w-full relative bg-[var(--clone-surface)] rounded-md">
                   {/* Show different UI when search results are displayed */}
                   {hasSearched && searchResults.length > 0 && !isFadingOut ? (
                     <>
@@ -458,7 +471,7 @@ export default function HomePage() {
                             >
                               <div
                                 className={`overlay transition-opacity ${extendBrandStyles ? 'opacity-100' : 'opacity-0'}`}
-                                style={{ background: 'color(display-p3 0.9059 0.3294 0.0784)', backgroundColor: '#FA4500' }}
+                                style={{ background: 'color(display-p3 0 0.898 1)', backgroundColor: '#00E5FF' }}
                               />
                               <div
                                 className="top-[2px] left-[2px] transition-all absolute rounded-full bg-accent-white"
@@ -481,7 +494,7 @@ export default function HomePage() {
                             value={additionalInstructions}
                             onChange={(e) => setAdditionalInstructions(e.target.value)}
                             placeholder="Describe the new functionality you want to build using this brand's styles..."
-                            className="w-full px-4 py-10 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 placeholder:text-gray-400 min-h-[80px] resize-none"
+                            className="w-full px-4 py-10 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-[var(--clone-cyan-100)] focus:outline-none focus:ring-1 focus:ring-[var(--clone-cyan-100)] placeholder:text-gray-400 min-h-[80px] resize-none"
                           />
                         </div>
                       )}
@@ -529,7 +542,7 @@ export default function HomePage() {
                         <select
                           value={selectedModel}
                           onChange={(e) => setSelectedModel(e.target.value)}
-                          className={`px-3 py-2.5 text-xs font-medium text-gray-700 bg-white rounded border border-gray-200 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 ${extendBrandStyles ? 'flex-1' : ''}`}
+                          className={`px-3 py-2.5 text-xs font-medium text-gray-700 bg-white rounded border border-gray-200 focus:border-[var(--clone-cyan-100)] focus:outline-none focus:ring-1 focus:ring-[var(--clone-cyan-100)] ${extendBrandStyles ? 'flex-1' : ''}`}
                         >
                           {models.map((model) => (
                             <option key={model.id} value={model.id}>
@@ -542,7 +555,7 @@ export default function HomePage() {
                         {!extendBrandStyles && (
                           <input
                             type="text"
-                            className="flex-1 px-3 py-2.5 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 placeholder:text-gray-400"
+                            className="flex-1 px-3 py-2.5 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-[var(--clone-cyan-100)] focus:outline-none focus:ring-1 focus:ring-[var(--clone-cyan-100)] placeholder:text-gray-400"
                             placeholder="Additional instructions (optional)"
                             onChange={(e) => sessionStorage.setItem('additionalInstructions', e.target.value)}
                           />
@@ -554,9 +567,7 @@ export default function HomePage() {
 
                 </div>
 
-                <div className="h-248 top-84 cw-768 pointer-events-none absolute overflow-clip -z-10">
-                  <AsciiExplosion className="-top-200" />
-                </div>
+                {/* CLONE! — fire explosion は削除済み（ダークテーマ移行のため） */}
               </div>
             </div>
           </div>
@@ -741,7 +752,7 @@ export default function HomePage() {
                                   e.stopPropagation();
                                   handleSubmit(result);
                                 }}
-                                className="bg-orange-500 hover:bg-orange-600 flex items-center justify-center button relative text-label-medium button-primary group/button rounded-10 p-8 gap-2 text-white active:scale-[0.995]"
+                                className="bg-[var(--clone-cyan-100)] hover:bg-[var(--clone-cyan-200)] flex items-center justify-center button relative text-label-medium button-primary group/button rounded-md p-8 gap-2 text-[#0a0a0b] active:scale-[0.995]"
                               >
                                 <div className="button-background absolute inset-0 rounded-10 pointer-events-none" />
                                 <svg 

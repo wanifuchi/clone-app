@@ -7,10 +7,10 @@ export default function HomeHeroBadge() {
       href="#"
       onClick={(e) => e.preventDefault()}
     >
-      <div className="px-8 text-label-x-small">Website Builder</div>
+      <div className="px-8 text-label-x-small text-[var(--clone-text-dim)]">Mirror any site into code</div>
 
       <div className="p-1">
-        <div className="size-18 bg-accent-black flex-center rounded-full group-hover:bg-heat-100 transition-all group-hover:w-30">
+        <div className="size-18 bg-[var(--clone-surface-2)] flex-center rounded-full group-hover:bg-heat-100 transition-all group-hover:w-30">
           <svg
             fill="none"
             height="8"

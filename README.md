@@ -1,67 +1,64 @@
-# Open Lovable
+# CLONE!
 
-Chat with AI to build React apps instantly. An example app made by the [Firecrawl](https://firecrawl.dev/?ref=open-lovable-github) team. For a complete cloud solution, check out [Lovable.dev](https://lovable.dev/) ❤️.
+> **Mirror any website into code.** — どんなサイトも、一瞬でコードに。
 
-<img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZtaHFleGRsMTNlaWNydGdianI4NGQ4dHhyZjB0d2VkcjRyeXBucCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZFVLWMa6dVskQX0qu1/giphy.gif" alt="Open Lovable Demo" width="100%"/>
+**CLONE!** は URL を 1 本投げ込むだけで、そのサイトを解析し React (Next.js) コンポーネントとして再構築してしまう AI ツールです。デザインの雰囲気を借りたいとき、既存ブランドを新しい機能で拡張したいとき、あるいはただ「このサイト、どう作ってるんだろう」と思ったとき — CLONE! がその瞬間にコードに変換します。
+
+---
+
+## Features
+
+- **Instant clone** — URL を貼るだけで、AI がスクリーンショットと構造を読み、React コードを生成。
+- **Brand extension mode** — 既存サイトのブランドスタイルだけを抽出して、全く新しい画面に再利用。
+- **Multi-model** — OpenAI / Anthropic / Gemini / Groq を切り替え可能。
+- **Sandboxed preview** — Vercel Sandbox または E2B 上で即プレビュー。
+- **Dark, electric** — Linear / Vercel / Raycast の空気感を吸ったダークファーストな UI。
 
 ## Setup
 
-1. **Clone & Install**
+1. **Install**
+
 ```bash
-git clone https://github.com/firecrawl/open-lovable.git
-cd open-lovable
 pnpm install  # or npm install / yarn install
 ```
 
-2. **Add `.env.local`**
+2. **Create `.env.local`**
 
 ```env
-# =================================================================
-# REQUIRED
-# =================================================================
+# Required — website scraping
 FIRECRAWL_API_KEY=your_firecrawl_api_key    # https://firecrawl.dev
 
-# =================================================================
-# AI PROVIDER - Choose your LLM
-# =================================================================
-GEMINI_API_KEY=your_gemini_api_key        # https://aistudio.google.com/app/apikey
-ANTHROPIC_API_KEY=your_anthropic_api_key  # https://console.anthropic.com
-OPENAI_API_KEY=your_openai_api_key        # https://platform.openai.com
-GROQ_API_KEY=your_groq_api_key            # https://console.groq.com
+# AI provider — choose at least one
+GEMINI_API_KEY=your_gemini_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+OPENAI_API_KEY=your_openai_api_key
+GROQ_API_KEY=your_groq_api_key
 
-# =================================================================
-# FAST APPLY (Optional - for faster edits)
-# =================================================================
-MORPH_API_KEY=your_morphllm_api_key    # https://morphllm.com/dashboard
+# Optional — faster edits
+MORPH_API_KEY=your_morphllm_api_key
 
-# =================================================================
-# SANDBOX PROVIDER - Choose ONE: Vercel (default) or E2B
-# =================================================================
-SANDBOX_PROVIDER=vercel  # or 'e2b'
-
-# Option 1: Vercel Sandbox (default)
-# Choose one authentication method:
-
-# Method A: OIDC Token (recommended for development)
-# Run `vercel link` then `vercel env pull` to get VERCEL_OIDC_TOKEN automatically
+# Sandbox provider — vercel (default) or e2b
+SANDBOX_PROVIDER=vercel
 VERCEL_OIDC_TOKEN=auto_generated_by_vercel_env_pull
-
-# Method B: Personal Access Token (for production or when OIDC unavailable)
-# VERCEL_TEAM_ID=team_xxxxxxxxx      # Your Vercel team ID 
-# VERCEL_PROJECT_ID=prj_xxxxxxxxx    # Your Vercel project ID
-# VERCEL_TOKEN=vercel_xxxxxxxxxxxx   # Personal access token from Vercel dashboard
-
-# Option 2: E2B Sandbox
-# E2B_API_KEY=your_e2b_api_key      # https://e2b.dev
+# E2B_API_KEY=your_e2b_api_key
 ```
 
 3. **Run**
+
 ```bash
-pnpm dev  # or npm run dev / yarn dev
+pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) and paste any URL.
+
+## Stack
+
+Next.js 16 · React 19 · Tailwind CSS · framer-motion · Firecrawl SDK · Vercel Sandbox / E2B · AI SDK (OpenAI / Anthropic / Google / Groq)
 
 ## License
 
 MIT
+
+---
+
+<sub>Based on [open-lovable](https://github.com/mendableai/open-lovable) by Firecrawl (MIT). CLONE! is an independent rebrand and UI overhaul.</sub>

@@ -19,8 +19,8 @@ import HomeHeroTitle from "@/components/app/(home)/sections/hero/Title/Title";
 import HeroInput from "@/components/app/(home)/sections/hero-input/HeroInput";
 import { Connector } from "@/components/shared/layout/curvy-rect";
 import HeroFlame from "@/components/shared/effects/flame/hero-flame";
-import FirecrawlIcon from "@/components/FirecrawlIcon";
-import FirecrawlLogo from "@/components/FirecrawlLogo";
+import CloneIcon from "@/components/shared/layout/CloneIcon";
+import CloneLogo from "@/components/shared/layout/CloneLogo";
 
 export default function LandingPage() {
   return (
@@ -42,14 +42,15 @@ export default function LandingPage() {
             <div className="max-w-[900px] mx-auto w-full flex justify-between items-center">
               <div className="flex gap-24 items-center">
                 <Link href="/" className="flex items-center gap-2">
-                  <FirecrawlIcon className="w-7 h-7 text-accent-black" />
-                  <FirecrawlLogo />
+                  <CloneIcon className="w-7 h-7 text-[var(--clone-cyan-100)]" />
+                  <CloneLogo />
                 </Link>
               </div>
 
               <div className="flex gap-8">
                 <Link
                   href="https://github.com/mendableai/open-lovable"
+                  aria-label="CLONE! source template"
                   target="_blank"
                   className="contents"
                 >

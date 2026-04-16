@@ -25,36 +25,43 @@
 }
 
 @layer base {
+  /* CLONE! dark-first tokens (shadcn compatible). */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 240 7% 4%;
+    --foreground: 240 10% 97%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 240 9% 6%;
+    --card-foreground: 240 10% 97%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 240 9% 6%;
+    --popover-foreground: 240 10% 97%;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 189 100% 50%;           /* electric cyan #00E5FF */
+    --primary-foreground: 240 10% 5%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 240 6% 12%;
+    --secondary-foreground: 240 10% 97%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 240 6% 10%;
+    --muted-foreground: 240 5% 64%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 262 83% 58%;             /* purple #7C3AED */
+    --accent-foreground: 240 10% 97%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+    --border: 240 8% 14%;
+    --input: 240 8% 14%;
+    --ring: 189 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
+  }
+
+  html,
+  body {
+    background-color: var(--clone-bg);
+    color: var(--clone-text);
   }
 
   /* Temporarily disable dark mode until we migrate to semantic colors */

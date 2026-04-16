@@ -6,8 +6,8 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import FirecrawlIcon from "@/components/shared/firecrawl-icon/firecrawl-icon";
-import Logo from "@/components/shared/header/_svg/Logo";
+import CloneIcon from "@/components/shared/layout/CloneIcon";
+import CloneLogo from "@/components/shared/layout/CloneLogo";
 import { useHeaderContext } from "@/components/shared/header/HeaderContext";
 import { cn } from "@/utils/cn";
 
@@ -45,8 +45,8 @@ export default function HeaderBrandKit() {
           }
         }}
       >
-        <FirecrawlIcon className="size-28 -top-2 relative" />
-        <Logo />
+        <CloneIcon className="size-24 relative text-[var(--clone-cyan-100)]" />
+        <CloneLogo />
       </Link>
 
       <AnimatePresence initial={false} mode="popLayout">
