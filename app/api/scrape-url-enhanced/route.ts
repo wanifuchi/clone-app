@@ -28,55 +28,63 @@ export async function POST(request: NextRequest) {
     }
     
     console.log('[scrape-url-enhanced] Scraping with Firecrawl:', url);
-    
+
     const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY;
     if (!FIRECRAWL_API_KEY) {
       throw new Error('FIRECRAWL_API_KEY environment variable is not set');
     }
-    
-    // Make request to Firecrawl API with maxAge for 500% faster scraping
-    const firecrawlResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${FIRECRAWL_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        url,
-        formats: ['markdown', 'html', 'screenshot'],
-        waitFor: 3000,
-        timeout: 30000,
-        blockAds: true,
-        maxAge: 3600000, // Use cached data if less than 1 hour old (500% faster!)
-        actions: [
-          {
-            type: 'wait',
-            milliseconds: 2000
-          },
-          {
-            type: 'screenshot',
-            fullPage: false // Just visible viewport for performance
-          }
-        ]
-      })
-    });
-    
-    if (!firecrawlResponse.ok) {
-      const error = await firecrawlResponse.text();
-      throw new Error(`Firecrawl API error: ${error}`);
+
+    async function firecrawlScrape(payload: Record<string, unknown>) {
+      const res = await fetch('https://api.firecrawl.dev/v1/scrape', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${FIRECRAWL_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const body = await res.text();
+      return { res, body };
     }
-    
-    const data = await firecrawlResponse.json();
-    
+
+    // Primary request: rich scrape with screenshot, generous timeout
+    let { res: firecrawlResponse, body: rawBody } = await firecrawlScrape({
+      url,
+      formats: ['markdown', 'html', 'screenshot'],
+      waitFor: 2000,
+      timeout: 60000,
+      blockAds: true,
+      maxAge: 3600000,
+    });
+
+    // If Firecrawl times out, retry with a minimal markdown-only request
+    if (!firecrawlResponse.ok && rawBody.includes('SCRAPE_TIMEOUT')) {
+      console.warn('[scrape-url-enhanced] Primary scrape timed out, retrying with minimal payload');
+      ({ res: firecrawlResponse, body: rawBody } = await firecrawlScrape({
+        url,
+        formats: ['markdown'],
+        waitFor: 500,
+        timeout: 45000,
+        blockAds: true,
+        onlyMainContent: true,
+      }));
+    }
+
+    if (!firecrawlResponse.ok) {
+      throw new Error(`Firecrawl API error: ${rawBody}`);
+    }
+
+    const data = JSON.parse(rawBody);
+
     if (!data.success || !data.data) {
       throw new Error('Failed to scrape content');
     }
     
-    const { markdown, metadata, screenshot, actions } = data.data;
+    const { markdown, metadata, screenshot } = data.data;
     // html available but not used in current implementation
-    
-    // Get screenshot from either direct field or actions result
-    const screenshotUrl = screenshot || actions?.screenshots?.[0] || null;
+
+    // Get screenshot (may be missing in the fallback request)
+    const screenshotUrl = screenshot || null;
     
     // Sanitize the markdown content
     const sanitizedMarkdown = sanitizeQuotes(markdown || '');
