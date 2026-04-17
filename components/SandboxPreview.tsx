@@ -28,7 +28,7 @@ export default function SandboxPreview({
     return (
       <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
         <div className="font-mono text-sm whitespace-pre-wrap text-gray-300">
-          {output || 'No output yet...'}
+          {output || 'まだ出力はありません…'}
         </div>
       </div>
     );
@@ -40,28 +40,28 @@ export default function SandboxPreview({
       <div className="flex items-center justify-between bg-gray-800 rounded-lg p-3 border border-gray-700">
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-400">
-            {type === 'vite' ? '⚡ Vite' : '▲ Next.js'} Preview
+            {type === 'vite' ? '⚡ Vite' : '▲ Next.js'} プレビュー
           </span>
           {previewUrl ? (
             <code className="text-xs bg-gray-900 px-2 py-1 rounded text-blue-400">
               {previewUrl}
             </code>
           ) : (
-            <span className="text-xs text-gray-500">Waiting for sandbox URL...</span>
+            <span className="text-xs text-gray-500">サンドボックスの URL を待機中…</span>
           )}
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowConsole(!showConsole)}
             className="p-2 hover:bg-gray-700 rounded transition-colors"
-            title="Toggle console"
+            title="コンソールの表示切替"
           >
             <Terminal className="w-4 h-4" />
           </button>
           <button
             onClick={handleRefresh}
             className="p-2 hover:bg-gray-700 rounded transition-colors"
-            title="Refresh preview"
+            title="プレビューを更新"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -71,7 +71,7 @@ export default function SandboxPreview({
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 hover:bg-gray-700 rounded transition-colors"
-              title="Open in new tab"
+              title="新しいタブで開く"
             >
               <ExternalLink className="w-4 h-4" />
             </a>
@@ -86,11 +86,11 @@ export default function SandboxPreview({
             <div className="text-center">
               <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
               <p className="text-sm text-gray-400">
-                {!previewUrl 
-                  ? 'Setting up sandbox environment...' 
-                  : type === 'vite' 
-                    ? 'Starting Vite dev server...' 
-                    : 'Starting Next.js dev server...'
+                {!previewUrl
+                  ? 'サンドボックス環境をセットアップ中…'
+                  : type === 'vite'
+                    ? 'Vite 開発サーバーを起動中…'
+                    : 'Next.js 開発サーバーを起動中…'
                 }
               </p>
             </div>
@@ -102,7 +102,7 @@ export default function SandboxPreview({
             key={iframeKey}
             src={previewUrl}
             className="w-full h-[600px] bg-white"
-            title={`${type} preview`}
+            title={`${type} プレビュー`}
             sandbox="allow-scripts allow-same-origin allow-forms"
           />
         )}
@@ -112,7 +112,7 @@ export default function SandboxPreview({
       {showConsole && output && (
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-gray-400">Console Output</span>
+            <span className="text-sm font-semibold text-gray-400">コンソール出力</span>
           </div>
           <div className="font-mono text-xs whitespace-pre-wrap text-gray-300 max-h-48 overflow-y-auto">
             {output}

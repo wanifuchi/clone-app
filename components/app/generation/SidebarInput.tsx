@@ -24,14 +24,14 @@ export default function SidebarInput({ onSubmit, disabled = false }: SidebarInpu
   // };
 
   const styles = [
-    { id: "1", name: "Glassmorphism", description: "Frosted glass effect" },
-    { id: "2", name: "Neumorphism", description: "Soft 3D shadows" },
-    { id: "3", name: "Brutalism", description: "Bold and raw" },
-    { id: "4", name: "Minimalist", description: "Clean and simple" },
-    { id: "5", name: "Dark Mode", description: "Dark theme design" },
-    { id: "6", name: "Gradient Rich", description: "Vibrant gradients" },
-    { id: "7", name: "3D Depth", description: "Dimensional layers" },
-    { id: "8", name: "Retro Wave", description: "80s inspired" },
+    { id: "1", name: "ガラスモーフィズム", description: "すりガラス風のエフェクト" },
+    { id: "2", name: "ニューモーフィズム", description: "柔らかな3Dシャドウ" },
+    { id: "3", name: "ブルータリズム", description: "大胆でラフな表現" },
+    { id: "4", name: "ミニマリスト", description: "クリーンでシンプル" },
+    { id: "5", name: "ダークモード", description: "ダークテーマデザイン" },
+    { id: "6", name: "グラデーションリッチ", description: "鮮やかなグラデーション" },
+    { id: "7", name: "3D奥行き", description: "立体的なレイヤー" },
+    { id: "8", name: "レトロウェーブ", description: "80年代風" },
   ];
 
   const models = appConfig.ai.availableModels.map(model => ({
@@ -58,7 +58,7 @@ export default function SidebarInput({ onSubmit, disabled = false }: SidebarInpu
          {/* link to home page with button */}
          <Link href="/">
           <button className="w-full px-3 py-2 text-xs font-medium text-gray-700 bg-white rounded border border-gray-200 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
-            Generate a new website
+            新しいウェブサイトを生成
           </button>
          </Link>
         </div>
@@ -68,7 +68,7 @@ export default function SidebarInput({ onSubmit, disabled = false }: SidebarInpu
           <div className="p-4 space-y-4">
             {/* Style Selector */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Style</label>
+              <label className="block text-xs font-medium text-gray-700 mb-2">スタイル</label>
               <div className="grid grid-cols-2 gap-1.5">
                 {styles.map((style) => (
                   <button
@@ -92,7 +92,7 @@ export default function SidebarInput({ onSubmit, disabled = false }: SidebarInpu
 
             {/* Model Selector */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">AI Model</label>
+              <label className="block text-xs font-medium text-gray-700 mb-2">AI モデル</label>
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
@@ -109,14 +109,14 @@ export default function SidebarInput({ onSubmit, disabled = false }: SidebarInpu
 
             {/* Additional Instructions */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Additional Instructions (optional)</label>
+              <label className="block text-xs font-medium text-gray-700 mb-2">追加の指示（任意）</label>
               <input
                 type="text"
                 value={additionalInstructions}
                 onChange={(e) => setAdditionalInstructions(e.target.value)}
                 disabled={disabled}
                 className="w-full px-3 py-2 text-xs text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 placeholder:text-gray-400"
-                placeholder="e.g., make it more colorful, add animations..."
+                placeholder="例: もっとカラフルに、アニメーションを追加…"
               />
             </div>
 
@@ -133,7 +133,7 @@ export default function SidebarInput({ onSubmit, disabled = false }: SidebarInpu
                   }
                 `}
               >
-                {disabled ? 'Scraping...' : 'Scrape Site'}
+                {disabled ? '取得中…' : 'サイトを取得'}
               </button>
             </div>
           </div>

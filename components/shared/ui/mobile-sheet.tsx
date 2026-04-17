@@ -195,7 +195,7 @@ export function MobileSheet({
                         "bg-black-alpha-4 hover:bg-black-alpha-6 active:scale-[0.98]",
                         "text-black-alpha-64 hover:text-accent-black",
                       )}
-                      aria-label="Close"
+                      aria-label="閉じる"
                     >
                       <X className="w-16 h-16" />
                     </button>

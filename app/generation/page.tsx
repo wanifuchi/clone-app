@@ -63,13 +63,13 @@ interface ScrapeData {
 function AISandboxPage() {
   const [sandboxData, setSandboxData] = useState<SandboxData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState({ text: 'Not connected', active: false });
+  const [status, setStatus] = useState({ text: '未接続', active: false });
   const [responseArea, setResponseArea] = useState<string[]>([]);
-  const [structureContent, setStructureContent] = useState('No sandbox created yet');
+  const [structureContent, setStructureContent] = useState('サンドボックスはまだ作成されていません');
   const [promptInput, setPromptInput] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
-      content: 'Welcome! I can help you generate code with full context of your sandbox files and structure. Just start chatting - I\'ll automatically create a sandbox for you if needed!\n\nTip: If you see package errors like "react-router-dom not found", just type "npm install" or "check packages" to automatically install missing packages.',
+      content: 'ようこそ！サンドボックスのファイルと構造を踏まえてコード生成をお手伝いします。チャットを始めるだけで、必要に応じてサンドボックスを自動作成します！\n\nヒント: 「react-router-dom が見つかりません」のようなパッケージエラーが出た場合は、「npm install」または「check packages」と入力すれば、不足しているパッケージを自動でインストールします。',
       type: 'system',
       timestamp: new Date()
     }
@@ -256,7 +256,7 @@ function AISandboxPage() {
       } catch (error) {
         console.error('[ai-sandbox] Failed to clear old conversation:', error);
         if (isMounted) {
-          addChatMessage('Failed to clear old conversation data.', 'error');
+          addChatMessage('過去の会話データのクリアに失敗しました。', 'error');
         }
       }
       
@@ -288,7 +288,7 @@ function AISandboxPage() {
       } catch (error) {
         console.error('[ai-sandbox] Failed to create or restore sandbox:', error);
         if (isMounted) {
-          addChatMessage('Failed to create or restore sandbox.', 'error');
+          addChatMessage('サンドボックスの作成または復元に失敗しました。', 'error');
         }
       } finally {
         if (isMounted) {
@@ -408,7 +408,7 @@ function AISandboxPage() {
     }
     
     // Vite error checking removed - handled by template setup
-    addChatMessage('Checking packages... Sandbox is ready with Vite configuration.', 'system');
+    addChatMessage('パッケージを確認しています… サンドボックスは Vite 設定で準備完了しています。', 'system');
   };
   
   const handleSurfaceError = (_errors: any[]) => {
@@ -423,7 +423,7 @@ function AISandboxPage() {
   
   const installPackages = async (packages: string[]) => {
     if (!sandboxData) {
-      addChatMessage('No active sandbox. Create a sandbox first!', 'system');
+      addChatMessage('有効なサンドボックスがありません。先にサンドボックスを作成してください。', 'system');
       return;
     }
     
@@ -485,7 +485,7 @@ function AISandboxPage() {
         }
       }
     } catch (error: any) {
-      addChatMessage(`Failed to install packages: ${error.message}`, 'system');
+      addChatMessage(`パッケージのインストールに失敗しました: ${error.message}`, 'system');
     }
   };
 
@@ -497,10 +497,10 @@ function AISandboxPage() {
       if (data.active && data.healthy && data.sandboxData) {
         console.log('[checkSandboxStatus] Setting sandboxData from API:', data.sandboxData);
         setSandboxData(data.sandboxData);
-        updateStatus('Sandbox active', true);
+        updateStatus('サンドボックス稼働中', true);
       } else if (data.active && !data.healthy) {
         // Sandbox exists but not responding
-        updateStatus('Sandbox not responding', false);
+        updateStatus('サンドボックスが応答していません', false);
         // Keep existing sandboxData if we have it - don't clear it
       } else {
         // Only clear sandboxData if we don't already have it or if we're explicitly checking from a fresh state
@@ -508,11 +508,11 @@ function AISandboxPage() {
         if (!sandboxData) {
           console.log('[checkSandboxStatus] No existing sandboxData, clearing state');
           setSandboxData(null);
-          updateStatus('No sandbox', false);
+          updateStatus('サンドボックスなし', false);
         } else {
           // Keep existing sandboxData and just update status
           console.log('[checkSandboxStatus] Keeping existing sandboxData, sandbox inactive but data preserved');
-          updateStatus('Sandbox status unknown', false);
+          updateStatus('サンドボックスの状態が不明です', false);
         }
       }
     } catch (error) {
@@ -520,9 +520,9 @@ function AISandboxPage() {
       // Only clear on error if we don't have existing sandboxData
       if (!sandboxData) {
         setSandboxData(null);
-        updateStatus('Error', false);
+        updateStatus('エラー', false);
       } else {
-        updateStatus('Status check failed', false);
+        updateStatus('ステータス確認に失敗しました', false);
       }
     }
   };
@@ -540,7 +540,7 @@ function AISandboxPage() {
     console.log('[createSandbox] Starting sandbox creation...');
     setLoading(true);
     setShowLoadingBackground(true);
-    updateStatus('Creating sandbox...', false);
+    updateStatus('サンドボックスを作成中…', false);
     setResponseArea([]);
     setScreenshotError(null);
     
@@ -558,9 +558,9 @@ function AISandboxPage() {
         sandboxCreationRef.current = false; // Reset the ref on success
         console.log('[createSandbox] Setting sandboxData from creation:', data);
         setSandboxData(data);
-        updateStatus('Sandbox active', true);
-        log('Sandbox created successfully!');
-        log(`Sandbox ID: ${data.sandboxId}`);
+        updateStatus('サンドボックス稼働中', true);
+        log('サンドボックスを作成しました！');
+        log(`サンドボックスID: ${data.sandboxId}`);
         log(`URL: ${data.url}`);
         
         // Update URL with sandbox ID
@@ -588,9 +588,9 @@ function AISandboxPage() {
         
         // Only add welcome message if not coming from home screen
         if (!fromHomeScreen) {
-          addChatMessage(`Sandbox created! ID: ${data.sandboxId}. I now have context of your sandbox and can help you build your app. Just ask me to create components and I'll automatically apply them!
+          addChatMessage(`サンドボックスを作成しました！ ID: ${data.sandboxId}。サンドボックスのコンテキストを取得したので、アプリ構築をお手伝いできます。コンポーネントを作成するよう指示していただければ、自動的に適用します！
 
-Tip: I automatically detect and install npm packages from your code imports (like react-router-dom, axios, etc.)`, 'system');
+ヒント: コード内のインポート（react-router-dom や axios など）から npm パッケージを自動検出し、インストールします。`, 'system');
         }
         
         setTimeout(() => {
@@ -606,9 +606,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       }
     } catch (error: any) {
       console.error('[createSandbox] Error:', error);
-      updateStatus('Error', false);
-      log(`Failed to create sandbox: ${error.message}`, 'error');
-      addChatMessage(`Failed to create sandbox: ${error.message}`, 'system');
+      updateStatus('エラー', false);
+      log(`サンドボックスの作成に失敗しました: ${error.message}`, 'error');
+      addChatMessage(`サンドボックスの作成に失敗しました: ${error.message}`, 'system');
       throw error;
     } finally {
       setLoading(false);
@@ -620,13 +620,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     if (typeof structure === 'object') {
       setStructureContent(JSON.stringify(structure, null, 2));
     } else {
-      setStructureContent(structure || 'No structure available');
+      setStructureContent(structure || '構造情報はありません');
     }
   };
 
   const applyGeneratedCode = async (code: string, isEdit: boolean = false, overrideSandboxData?: SandboxData) => {
     setLoading(true);
-    log('Applying AI-generated code...');
+    log('AI生成コードを適用中…');
     
     try {
       // Show progress component instead of individual messages
@@ -741,9 +741,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   
                 case 'command-complete':
                   if (data.success) {
-                    addChatMessage(`Command completed successfully`, 'system');
+                    addChatMessage(`コマンドが正常に完了しました`, 'system');
                   } else {
-                    addChatMessage(`Command failed with exit code ${data.exitCode}`, 'system');
+                    addChatMessage(`コマンドが終了コード ${data.exitCode} で失敗しました`, 'system');
                   }
                   break;
                   
@@ -759,7 +759,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   break;
                   
                 case 'error':
-                  addChatMessage(`Error: ${data.message || data.error || 'Unknown error'}`, 'system');
+                  addChatMessage(`エラー: ${data.message || data.error || '不明なエラー'}`, 'system');
                   // Reset loading state on error
                   setLoading(false);
                   break;
@@ -802,11 +802,11 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         
         // Log package installation results without duplicate messages
         if (results.packagesInstalled?.length > 0) {
-          log(`Packages installed: ${results.packagesInstalled.join(', ')}`);
+          log(`インストール済みパッケージ: ${results.packagesInstalled.join(', ')}`);
         }
-        
+
         if (results.filesCreated?.length > 0) {
-          log('Files created:');
+          log('作成されたファイル:');
           results.filesCreated.forEach((file: string) => {
             log(`  ${file}`, 'command');
           });
@@ -824,7 +824,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
         
         if (results.filesUpdated?.length > 0) {
-          log('Files updated:');
+          log('更新されたファイル:');
           results.filesUpdated.forEach((file: string) => {
             log(`  ${file}`, 'command');
           });
@@ -840,7 +840,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }));
         
         if (results.commandsExecuted?.length > 0) {
-          log('Commands executed:');
+          log('実行されたコマンド:');
           results.commandsExecuted.forEach((cmd: string) => {
             log(`  $ ${cmd}`, 'command');
           });
@@ -861,11 +861,11 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
         
         if (data.autoCompleted) {
-          log('Auto-generating missing components...', 'command');
-          
+          log('不足しているコンポーネントを自動生成しています…', 'command');
+
           if (data.autoCompletedComponents) {
             setTimeout(() => {
-              log('Auto-generated missing components:', 'info');
+              log('自動生成された不足コンポーネント:', 'info');
               data.autoCompletedComponents.forEach((comp: string) => {
                 log(`  ${comp}`, 'command');
               });
@@ -877,13 +877,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           if (data.missingImports && data.missingImports.length > 0) {
             const missingList = data.missingImports.join(', ');
             addChatMessage(
-              `Ask me to "create the missing components: ${missingList}" to fix these import errors.`,
+              `インポートエラーを修正するには「不足しているコンポーネントを作成: ${missingList}」と指示してください。`,
               'system'
             );
           }
         }
         
-        log('Code applied successfully!');
+        log('コードを適用しました！');
         console.log('[applyGeneratedCode] Response data:', data);
         console.log('[applyGeneratedCode] Debug info:', data.debug);
         console.log('[applyGeneratedCode] Current sandboxData:', sandboxData);
@@ -905,28 +905,28 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           // Update the chat message to show success
           // Only show file list if not in edit mode
           if (isEdit) {
-            addChatMessage(`Edit applied successfully!`, 'system');
+            addChatMessage(`編集を適用しました！`, 'system');
           } else {
             // Check if this is part of a generation flow (has recent AI recreation message)
             const recentMessages = chatMessages.slice(-5);
-            const isPartOfGeneration = recentMessages.some(m => 
-              m.content.includes('AI recreation generated') || 
-              m.content.includes('Code generated')
+            const isPartOfGeneration = recentMessages.some(m =>
+              m.content.includes('AIによる再現を生成') ||
+              m.content.includes('コードを生成')
             );
-            
+
             // Don't show files if part of generation flow to avoid duplication
             if (isPartOfGeneration) {
-              addChatMessage(`Applied ${results.filesCreated.length} files successfully!`, 'system');
+              addChatMessage(`${results.filesCreated.length} 個のファイルを適用しました！`, 'system');
             } else {
-              addChatMessage(`Applied ${results.filesCreated.length} files successfully!`, 'system', {
+              addChatMessage(`${results.filesCreated.length} 個のファイルを適用しました！`, 'system', {
                 appliedFiles: results.filesCreated
               });
             }
           }
-          
+
           // If there are failed packages, add a message about checking for errors
           if (results.packagesFailed?.length > 0) {
-            addChatMessage(`⚠️ Some packages failed to install. Check the error banner above for details.`, 'system');
+            addChatMessage(`⚠️ 一部のパッケージのインストールに失敗しました。上部のエラーバナーで詳細をご確認ください。`, 'system');
           }
           
           // Fetch updated file structure
@@ -1052,10 +1052,10 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
       } else {
         // If no final data was received, still close loading
-        addChatMessage('Code application may have partially succeeded. Check the preview.', 'system');
+        addChatMessage('コードの適用は部分的に成功している可能性があります。プレビューをご確認ください。', 'system');
       }
     } catch (error: any) {
-      log(`Failed to apply code: ${error.message}`, 'error');
+      log(`コードの適用に失敗しました: ${error.message}`, 'error');
     } finally {
       setLoading(false);
       // Clear isEdit flag after applying code
@@ -1152,7 +1152,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
             <div className="p-4 bg-gray-100 text-gray-900 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BsFolderFill style={{ width: '16px', height: '16px' }} />
-                <span className="text-sm font-medium">Explorer</span>
+                <span className="text-sm font-medium">エクスプローラー</span>
               </div>
             </div>
             
@@ -1273,12 +1273,12 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     {generationProgress.isThinking ? (
                       <>
                         <div className="w-3 h-3 bg-purple-600 rounded-full animate-pulse" />
-                        AI is thinking...
+                        AI が思考中…
                       </>
                     ) : (
                       <>
                         <span className="text-purple-600">✓</span>
-                        Thought for {generationProgress.thinkingDuration || 0} seconds
+                        {generationProgress.thinkingDuration || 0} 秒考えました
                       </>
                     )}
                   </div>
@@ -1335,7 +1335,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                           {(() => {
                             // Find the file content from generated files
                             const file = generationProgress.files.find(f => f.path === selectedFile);
-                            return file?.content || '// File content will appear here';
+                            return file?.content || '// ここにファイル内容が表示されます';
                           })()}
                         </SyntaxHighlighter>
                       </div>
@@ -1353,8 +1353,8 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                             <div className="absolute inset-0 border-8 border-green-500 rounded-full animate-spin border-t-transparent"></div>
                           </div>
                         </div>
-                        <h3 className="text-xl font-medium text-white mb-2">AI is analyzing your request</h3>
-                        <p className="text-gray-400 text-sm">{generationProgress.status || 'Preparing to generate code...'}</p>
+                        <h3 className="text-xl font-medium text-white mb-2">AI がリクエストを解析中です</h3>
+                        <p className="text-gray-400 text-sm">{generationProgress.status || 'コード生成の準備中…'}</p>
                       </div>
                     </div>
                   ) : (
@@ -1362,7 +1362,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                       <div className="px-4 py-2 bg-gray-100 text-gray-900 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div className="w-16 h-16 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-                          <span className="font-mono text-sm">Streaming code...</span>
+                          <span className="font-mono text-sm">コードをストリーミング中…</span>
                         </div>
                       </div>
                       <div className="p-4 bg-gray-900 rounded">
@@ -1377,7 +1377,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                           }}
                           showLineNumbers={true}
                         >
-                          {generationProgress.streamedCode || 'Starting code generation...'}
+                          {generationProgress.streamedCode || 'コード生成を開始しています…'}
                         </SyntaxHighlighter>
                         <span className="inline-block w-3 h-5 bg-orange-400 ml-1 animate-pulse" />
                       </div>
@@ -1473,7 +1473,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                         <div className="px-4 py-2 bg-[#36322F] text-white flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div className="w-16 h-16 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                            <span className="font-mono text-sm">Processing...</span>
+                            <span className="font-mono text-sm">処理中…</span>
                           </div>
                         </div>
                         <div className="bg-gray-900 border border-gray-700 rounded">
@@ -1500,7 +1500,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
                               // If only whitespace or nothing left, show loading message
                               // Use "Loading sandbox..." instead of "Waiting for next file..." for better UX
-                              return remainingContent || 'Loading sandbox...';
+                              return remainingContent || 'サンドボックスを読み込み中…';
                             })()}
                           </SyntaxHighlighter>
                         </div>
@@ -1570,18 +1570,18 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   
                   {/* Status text */}
                   <p className="text-white text-lg font-medium">
-                    {isCapturingScreenshot ? 'Analyzing website...' :
-                     isPreparingDesign ? 'Preparing design...' :
-                     generationProgress.isGenerating ? 'Generating code...' :
-                     'Loading...'}
+                    {isCapturingScreenshot ? 'ウェブサイトを解析中…' :
+                     isPreparingDesign ? 'デザインを準備中…' :
+                     generationProgress.isGenerating ? 'コードを生成中…' :
+                     '読み込み中…'}
                   </p>
-                  
+
                   {/* Subtle progress hint */}
                   <p className="text-white/60 text-sm mt-2">
-                    {isCapturingScreenshot ? 'Taking a screenshot of the site' :
-                     isPreparingDesign ? 'Understanding the layout and structure' :
-                     generationProgress.isGenerating ? 'Writing React components' :
-                     'Please wait...'}
+                    {isCapturingScreenshot ? 'サイトのスクリーンショットを取得しています' :
+                     isPreparingDesign ? 'レイアウトと構造を理解しています' :
+                     generationProgress.isGenerating ? 'React コンポーネントを作成しています' :
+                     'お待ちください…'}
                   </p>
                 </div>
               </div>
@@ -1598,7 +1598,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
               ref={iframeRef}
               src={sandboxData.url}
               className="w-full h-full border-none"
-              title="CLONE! Sandbox"
+              title="CLONE! サンドボックス"
               allow="clipboard-write"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
             />
@@ -1620,9 +1620,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   </div>
                   
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {codeApplicationState.stage === 'analyzing' && 'Analyzing code...'}
-                    {codeApplicationState.stage === 'installing' && 'Installing packages...'}
-                    {codeApplicationState.stage === 'applying' && 'Applying changes...'}
+                    {codeApplicationState.stage === 'analyzing' && 'コードを解析中…'}
+                    {codeApplicationState.stage === 'installing' && 'パッケージをインストール中…'}
+                    {codeApplicationState.stage === 'applying' && '変更を適用中…'}
                   </h3>
                   
                   {/* Package list during installation */}
@@ -1651,14 +1651,14 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   {/* Files being generated */}
                   {codeApplicationState.stage === 'applying' && codeApplicationState.filesGenerated && (
                     <div className="text-sm text-gray-600">
-                      Creating {codeApplicationState.filesGenerated.length} files...
+                      {codeApplicationState.filesGenerated.length} 個のファイルを作成中…
                     </div>
                   )}
-                  
+
                   <p className="text-sm text-gray-500 mt-2">
-                    {codeApplicationState.stage === 'analyzing' && 'Parsing generated code and detecting dependencies...'}
-                    {codeApplicationState.stage === 'installing' && 'This may take a moment while npm installs the required packages...'}
-                    {codeApplicationState.stage === 'applying' && 'Writing files to your sandbox environment...'}
+                    {codeApplicationState.stage === 'analyzing' && '生成されたコードを解析し、依存関係を検出しています…'}
+                    {codeApplicationState.stage === 'installing' && 'npm が必要なパッケージをインストールするまで少々お待ちください…'}
+                    {codeApplicationState.stage === 'applying' && 'サンドボックス環境にファイルを書き込んでいます…'}
                   </p>
                 </div>
               </div>
@@ -1668,7 +1668,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
             {generationProgress.isGenerating && generationProgress.isEdit && !codeApplicationState.stage && (
               <div className="absolute top-4 right-4 inline-flex items-center gap-2 px-3 py-1.5 bg-black/80 backdrop-blur-sm rounded-lg">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-white text-xs font-medium">Generating code...</span>
+                <span className="text-white text-xs font-medium">コードを生成中…</span>
               </div>
             )}
             
@@ -1682,7 +1682,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                 }
               }}
               className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-700 p-2 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
-              title="Refresh sandbox"
+              title="サンドボックスを更新"
             >
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1697,17 +1697,17 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         <div className="flex items-center justify-center h-full bg-gray-50 text-gray-600 text-lg">
           {screenshotError ? (
             <div className="text-center">
-              <p className="mb-2">Failed to capture screenshot</p>
+              <p className="mb-2">スクリーンショットの取得に失敗しました</p>
               <p className="text-sm text-gray-500">{screenshotError}</p>
             </div>
           ) : sandboxData ? (
             <div className="text-gray-500">
               <div className="w-16 h-16 border-2 border-gray-300 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-sm">Loading preview...</p>
+              <p className="text-sm">プレビューを読み込み中…</p>
             </div>
           ) : (
             <div className="text-gray-500 text-center">
-              <p className="text-sm">Start chatting to create your first app</p>
+              <p className="text-sm">チャットを開始して最初のアプリを作成しましょう</p>
             </div>
           )}
         </div>
@@ -1721,7 +1721,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     if (!message) return;
     
     if (!aiEnabled) {
-      addChatMessage('AI is disabled. Please enable it first.', 'system');
+      addChatMessage('AI が無効になっています。先に有効化してください。', 'system');
       return;
     }
     
@@ -1733,7 +1733,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     if (lowerMessage === 'check packages' || lowerMessage === 'install packages' || lowerMessage === 'npm install') {
       if (!sandboxData) {
         // More helpful message - user might be trying to run this too early
-        addChatMessage('The sandbox is still being set up. Please wait for the generation to complete, then try again.', 'system');
+        addChatMessage('サンドボックスはまだセットアップ中です。生成が完了するまでお待ちいただき、再度お試しください。', 'system');
         return;
       }
       await checkAndInstallPackages();
@@ -1746,9 +1746,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     
     if (!sandboxData) {
       sandboxCreating = true;
-      addChatMessage('Creating sandbox while I plan your app...', 'system');
+      addChatMessage('アプリを計画しつつサンドボックスを作成しています…', 'system');
       sandboxPromise = createSandbox(true).catch((error: any) => {
-        addChatMessage(`Failed to create sandbox: ${error.message}`, 'system');
+        addChatMessage(`サンドボックスの作成に失敗しました: ${error.message}`, 'system');
         throw error;
       });
     }
@@ -1761,13 +1761,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       setGenerationProgress(prev => ({
         ...prev,  // Preserve all existing state
         isGenerating: true,
-        status: 'Starting AI generation...',
+        status: 'AI生成を開始しています…',
         components: [],
         currentComponent: 0,
         streamedCode: '',
         isStreaming: false,
         isThinking: true,
-        thinkingText: 'Analyzing your request...',
+        thinkingText: 'リクエストを解析しています…',
         thinkingDuration: undefined,
         currentFile: undefined,
         lastProcessedPosition: 0,
@@ -1868,12 +1868,12 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     
                     // Tab is already switched after scraping
                     
-                    const updatedState = { 
-                      ...prev, 
+                    const updatedState = {
+                      ...prev,
                       streamedCode: newStreamedCode,
                       isStreaming: true,
                       isThinking: false,
-                      status: 'Generating code...'
+                      status: 'コードを生成中…'
                     };
                     
                     // Process complete files from the accumulated stream
@@ -1922,7 +1922,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                         
                         // Only show file status if not in edit mode
                         if (!prev.isEdit) {
-                          updatedState.status = `Completed ${filePath}`;
+                          updatedState.status = `${filePath} を完了`;
                         }
                         processedFiles.add(filePath);
                       }
@@ -1948,7 +1948,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                         };
                         // Only show file status if not in edit mode
                         if (!prev.isEdit) {
-                          updatedState.status = `Generating ${filePath}`;
+                          updatedState.status = `${filePath} を生成中`;
                         }
                       }
                     } else {
@@ -1958,14 +1958,14 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     return updatedState;
                   });
                 } else if (data.type === 'app') {
-                  setGenerationProgress(prev => ({ 
-                    ...prev, 
-                    status: 'Generated App.jsx structure'
+                  setGenerationProgress(prev => ({
+                    ...prev,
+                    status: 'App.jsx の構造を生成しました'
                   }));
                 } else if (data.type === 'component') {
                   setGenerationProgress(prev => ({
                     ...prev,
-                    status: `Generated ${data.name}`,
+                    status: `${data.name} を生成しました`,
                     components: [...prev.components, { 
                       name: data.name, 
                       path: data.path, 
@@ -1977,7 +1977,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   // Handle package installation from tool calls
                   setGenerationProgress(prev => ({
                     ...prev,
-                    status: data.message || `Installing ${data.name}`
+                    status: data.message || `${data.name} をインストール中`
                   }));
                 } else if (data.type === 'complete') {
                   generatedCode = data.generatedCode;
@@ -2028,7 +2028,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   
                   setGenerationProgress(prev => ({
                     ...prev,
-                    status: `Generated ${parsedFiles.length > 0 ? parsedFiles.length : prev.files.length} file${(parsedFiles.length > 0 ? parsedFiles.length : prev.files.length) !== 1 ? 's' : ''}!`,
+                    status: `${parsedFiles.length > 0 ? parsedFiles.length : prev.files.length} 個のファイルを生成しました！`,
                     isGenerating: false,
                     isStreaming: false,
                     isEdit: prev.isEdit,
@@ -2060,7 +2060,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           // For edits, show which file(s) were edited
           const editedFileNames = generatedFiles.map(f => f.split('/').pop()).join(', ');
           addChatMessage(
-            explanation || `Updated ${editedFileNames}`,
+            explanation || `${editedFileNames} を更新しました`,
             'ai',
             {
               appliedFiles: [generatedFiles[0]] // Only show the first edited file
@@ -2068,7 +2068,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           );
         } else {
           // For new generation, show all files
-          addChatMessage(explanation || 'Code generated!', 'ai', {
+          addChatMessage(explanation || 'コードを生成しました！', 'ai', {
             appliedFiles: generatedFiles
           });
         }
@@ -2080,7 +2080,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         // Wait for sandbox creation if it's still in progress
         let activeSandboxData = sandboxData;
         if (sandboxPromise) {
-          addChatMessage('Waiting for sandbox to be ready...', 'system');
+          addChatMessage('サンドボックスの準備が整うのを待っています…', 'system');
           try {
             const newSandboxData = await sandboxPromise;
             if (newSandboxData != null) {
@@ -2089,9 +2089,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
               setSandboxData(newSandboxData);
             }
             // Remove the waiting message
-            setChatMessages(prev => prev.filter(msg => msg.content !== 'Waiting for sandbox to be ready...'));
+            setChatMessages(prev => prev.filter(msg => msg.content !== 'サンドボックスの準備が整うのを待っています…'));
           } catch {
-            addChatMessage('Sandbox creation failed. Cannot apply code.', 'system');
+            addChatMessage('サンドボックスの作成に失敗しました。コードを適用できません。', 'system');
             return;
           }
         }
@@ -2114,21 +2114,21 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         ...prev,
         isGenerating: false,
         isStreaming: false,
-        status: 'Generation complete!',
+        status: '生成が完了しました！',
         isEdit: prev.isEdit,
         // Clear thinking state on completion
         isThinking: false,
         thinkingText: undefined,
         thinkingDuration: undefined
       }));
-      
+
       setTimeout(() => {
         // Switch to preview but keep files for display
         setActiveTab('preview');
       }, 1000); // Reduced from 3000ms to 1000ms
     } catch (error: any) {
-      setChatMessages(prev => prev.filter(msg => msg.content !== 'Thinking...'));
-      addChatMessage(`Error: ${error.message}`, 'system');
+      setChatMessages(prev => prev.filter(msg => msg.content !== '思考中…'));
+      addChatMessage(`エラー: ${error.message}`, 'system');
       // Reset generation progress and switch back to preview on error
       setGenerationProgress({
         isGenerating: false,
@@ -2151,13 +2151,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
   const downloadZip = async () => {
     if (!sandboxData) {
-      addChatMessage('Please wait for the sandbox to be created before downloading.', 'system');
+      addChatMessage('ダウンロードの前にサンドボックスの作成完了をお待ちください。', 'system');
       return;
     }
     
     setLoading(true);
-    log('Creating zip file...');
-    addChatMessage('Creating ZIP file of your Vite app...', 'system');
+    log('ZIPファイルを作成中…');
+    addChatMessage('Vite アプリの ZIP ファイルを作成しています…', 'system');
     
     try {
       const response = await fetch('/api/create-zip', {
@@ -2168,8 +2168,8 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       const data = await response.json();
       
       if (data.success) {
-        log('Zip file created!');
-        addChatMessage('ZIP file created! Download starting...', 'system');
+        log('ZIPファイルを作成しました！');
+        addChatMessage('ZIP ファイルを作成しました！ダウンロードを開始します…', 'system');
         
         const link = document.createElement('a');
         link.href = data.dataUrl;
@@ -2179,19 +2179,19 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         document.body.removeChild(link);
         
         addChatMessage(
-          'Your Vite app has been downloaded! To run it locally:\n' +
-          '1. Unzip the file\n' +
-          '2. Run: npm install\n' +
-          '3. Run: npm run dev\n' +
-          '4. Open http://localhost:5173',
+          'Vite アプリをダウンロードしました！ローカルで実行するには:\n' +
+          '1. ファイルを解凍\n' +
+          '2. 実行: npm install\n' +
+          '3. 実行: npm run dev\n' +
+          '4. http://localhost:5173 を開く',
           'system'
         );
       } else {
         throw new Error(data.error);
       }
     } catch (error: any) {
-      log(`Failed to create zip: ${error.message}`, 'error');
-      addChatMessage(`Failed to create ZIP: ${error.message}`, 'system');
+      log(`ZIPファイルの作成に失敗しました: ${error.message}`, 'error');
+      addChatMessage(`ZIP の作成に失敗しました: ${error.message}`, 'system');
     } finally {
       setLoading(false);
     }
@@ -2199,16 +2199,16 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
   const reapplyLastGeneration = async () => {
     if (!conversationContext.lastGeneratedCode) {
-      addChatMessage('No previous generation to re-apply', 'system');
+      addChatMessage('再適用できる過去の生成結果がありません', 'system');
       return;
     }
-    
+
     if (!sandboxData) {
-      addChatMessage('Please create a sandbox first', 'system');
+      addChatMessage('先にサンドボックスを作成してください', 'system');
       return;
     }
-    
-    addChatMessage('Re-applying last generation...', 'system');
+
+    addChatMessage('前回の生成結果を再適用しています…', 'system');
     const isEdit = conversationContext.appliedCode.length > 0;
     await applyGeneratedCode(conversationContext.lastGeneratedCode, isEdit);
   };
@@ -2660,8 +2660,8 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
     addChatMessage(
       brandExtensionMode
-        ? `Analyzing brand from ${cleanUrl}...`
-        : `Starting to clone ${cleanUrl}...`,
+        ? `${cleanUrl} のブランドを解析中…`
+        : `${cleanUrl} のクローンを開始しています…`,
       'system'
     );
     
@@ -2692,7 +2692,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       // Now start the clone process which will stream the generation
       setUrlInput(homeUrlInput);
       setUrlOverlayVisible(false); // Make sure overlay is closed
-      setUrlStatus(['Scraping website content...']);
+      setUrlStatus(['ウェブサイトのコンテンツを取得中…']);
       
       try {
         // Scrape the website
@@ -2712,7 +2712,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
         if (brandExtensionMode) {
           // === BRAND EXTENSION MODE ===
-          addChatMessage('Extracting brand styles from the website...', 'system');
+          addChatMessage('ウェブサイトからブランドスタイルを抽出しています…', 'system');
 
           // Call the brand extraction endpoint
           const extractResponse = await fetch('/api/extract-brand-styles', {
@@ -2735,11 +2735,11 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           }
 
           // Display branding summary with visual UI
-          addChatMessage(`Acquired branding format from ${cleanUrl}`, 'system', {
+          addChatMessage(`${cleanUrl} からブランドフォーマットを取得しました`, 'system', {
             brandingData: brandGuidelines.guidelines,
             sourceUrl: cleanUrl
           });
-          addChatMessage(`Building your custom component using these brand guidelines...`, 'system');
+          addChatMessage(`これらのブランドガイドラインに沿ってカスタムコンポーネントを構築しています…`, 'system');
 
           // Clear the flags after use
           sessionStorage.removeItem('brandExtensionMode');
@@ -2758,7 +2758,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
             source: 'search-result'
           };
           sessionStorage.removeItem('siteMarkdown'); // Clear after use
-          addChatMessage('Using cached content from search results...', 'system');
+          addChatMessage('検索結果のキャッシュ済みコンテンツを使用しています…', 'system');
         } else {
           // Perform fresh scraping
           const scrapeResponse = await fetch('/api/scrape-url-enhanced', {
@@ -2779,7 +2779,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
         }
 
-        setUrlStatus(brandExtensionMode ? ['Brand styles extracted!', 'Building your component...'] : ['Website scraped successfully!', 'Generating React app...']);
+        setUrlStatus(brandExtensionMode ? ['ブランドスタイルを抽出しました！', 'コンポーネントを構築中…'] : ['ウェブサイトの取得に成功しました！', 'React アプリを生成中…']);
 
         // Clear preparing design state and switch to generation tab
         setIsPreparingDesign(false);
@@ -3000,7 +3000,7 @@ Focus on the key sections and content, making it clean and modern.`;
 
         setGenerationProgress(prev => ({
           isGenerating: true,
-          status: 'Initializing AI...',
+          status: 'AI を初期化中…',
           components: [],
           currentComponent: 0,
           streamedCode: '',
@@ -3083,12 +3083,12 @@ Focus on the key sections and content, making it clean and modern.`;
                     
                     // Tab is already switched after scraping
                     
-                    const updatedState = { 
-                      ...prev, 
+                    const updatedState = {
+                      ...prev,
                       streamedCode: newStreamedCode,
                       isStreaming: true,
                       isThinking: false,
-                      status: 'Generating code...'
+                      status: 'コードを生成中…'
                     };
                     
                     // Process complete files from the accumulated stream
@@ -3137,7 +3137,7 @@ Focus on the key sections and content, making it clean and modern.`;
                         
                         // Only show file status if not in edit mode
                         if (!prev.isEdit) {
-                          updatedState.status = `Completed ${filePath}`;
+                          updatedState.status = `${filePath} を完了`;
                         }
                         processedFiles.add(filePath);
                       }
@@ -3163,7 +3163,7 @@ Focus on the key sections and content, making it clean and modern.`;
                         };
                         // Only show file status if not in edit mode
                         if (!prev.isEdit) {
-                          updatedState.status = `Generating ${filePath}`;
+                          updatedState.status = `${filePath} を生成中`;
                         }
                       }
                     } else {
@@ -3193,11 +3193,11 @@ Focus on the key sections and content, making it clean and modern.`;
           ...prev,
           isGenerating: false,
           isStreaming: false,
-          status: 'Generation complete!'
+          status: '生成が完了しました！'
         }));
-        
+
         if (generatedCode) {
-          addChatMessage('AI recreation generated!', 'system');
+          addChatMessage('AIによる再現を生成しました！', 'system');
           
           // Add the explanation to chat if available
           if (explanation && explanation.trim()) {
@@ -3207,12 +3207,13 @@ Focus on the key sections and content, making it clean and modern.`;
           setPromptInput(generatedCode);
 
           // Apply the code (first time is not edit mode)
-          await applyGeneratedCode(generatedCode, false);
+          // Pass createdSandbox (from auto-start flow) to avoid stale state bug
+          await applyGeneratedCode(generatedCode, false, createdSandbox || undefined);
 
           addChatMessage(
             brandExtensionMode
-              ? `Successfully built your custom component using ${cleanUrl}'s brand guidelines! You can now ask me to modify it or add more features.`
-              : `Successfully recreated ${url} as a modern React app${homeContextInput ? ` with your requested context: "${homeContextInput}"` : ''}! The scraped content is now in my context, so you can ask me to modify specific sections or add features based on the original site.`,
+              ? `${cleanUrl} のブランドガイドラインを使って、カスタムコンポーネントを正常に構築しました！修正や機能追加の指示も可能です。`
+              : `${url} をモダンな React アプリとして再現しました${homeContextInput ? `（指定のコンテキスト: "${homeContextInput}"）` : ''}！取得したコンテンツはコンテキストとして保持しているので、特定セクションの修正や元サイトをベースにした機能追加もご指示いただけます。`,
             'ai',
             {
               scrapedUrl: url,
@@ -3242,9 +3243,9 @@ Focus on the key sections and content, making it clean and modern.`;
           ...prev,
           isGenerating: false,
           isStreaming: false,
-          status: 'Generation complete!'
+          status: '生成が完了しました！'
         }));
-        
+
         // Clear screenshot and preparing design states to prevent them from showing on next run
         setIsScreenshotLoaded(false); // Reset loaded state
         setUrlScreenshot(null);
@@ -3260,7 +3261,7 @@ Focus on the key sections and content, making it clean and modern.`;
           setActiveTab('preview');
         }, 1000); // Show completion briefly then switch
       } catch (error: any) {
-        addChatMessage(`Failed to clone website: ${error.message}`, 'system');
+        addChatMessage(`ウェブサイトのクローンに失敗しました: ${error.message}`, 'system');
         setUrlStatus([]);
         setIsPreparingDesign(false);
         setIsStartingNewGeneration(false); // Clear new generation flag on error
@@ -3308,7 +3309,7 @@ Focus on the key sections and content, making it clean and modern.`;
           <button 
             onClick={() => createSandbox()}
             className="p-8 rounded-lg transition-colors bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
-            title="Create new sandbox"
+            title="新しいサンドボックスを作成"
           >
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -3317,7 +3318,7 @@ Focus on the key sections and content, making it clean and modern.`;
           <button 
             onClick={reapplyLastGeneration}
             className="p-8 rounded-lg transition-colors bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Re-apply last generation"
+            title="前回の生成結果を再適用"
             disabled={!conversationContext.lastGeneratedCode || !sandboxData}
           >
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -3328,7 +3329,7 @@ Focus on the key sections and content, making it clean and modern.`;
             onClick={downloadZip}
             disabled={!sandboxData}
             className="p-8 rounded-lg transition-colors bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Download your Vite app as ZIP"
+            title="Vite アプリを ZIP としてダウンロード"
           >
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -3407,11 +3408,11 @@ Focus on the key sections and content, making it clean and modern.`;
                       {screenshot && (
                         <div className="w-full">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-medium text-gray-600">Screenshot Preview</span>
+                            <span className="text-xs font-medium text-gray-600">スクリーンショットプレビュー</span>
                             <button
                               onClick={() => setScreenshotCollapsed(!screenshotCollapsed)}
                               className="text-gray-500 hover:text-gray-700 transition-colors p-1"
-                              aria-label={screenshotCollapsed ? 'Expand screenshot' : 'Collapse screenshot'}
+                              aria-label={screenshotCollapsed ? 'スクリーンショットを展開' : 'スクリーンショットを折りたたむ'}
                             >
                               <svg
                                 width="16"
@@ -3456,9 +3457,9 @@ Focus on the key sections and content, making it clean and modern.`;
             ref={chatMessagesRef}>
             {chatMessages.map((msg, idx) => {
               // Check if this message is from a successful generation
-              const isGenerationComplete = msg.content.includes('Successfully recreated') || 
-                                         msg.content.includes('AI recreation generated!') ||
-                                         msg.content.includes('Code generated!');
+              const isGenerationComplete = msg.content.includes('モダンな React アプリとして再現') ||
+                                         msg.content.includes('AIによる再現を生成しました！') ||
+                                         msg.content.includes('コードを生成しました！');
               
               // Get the files from metadata if this is a completion message
               // const completedFiles = msg.metadata?.appliedFiles || [];
@@ -3497,9 +3498,9 @@ Focus on the key sections and content, making it clean and modern.`;
                           </div>
                         </div>
                         <div className="flex-1">
-                          <div className="font-semibold mb-1">Build Errors Detected</div>
+                          <div className="font-semibold mb-1">ビルドエラーを検出しました</div>
                           <div className="whitespace-pre-wrap text-sm">{msg.content}</div>
-                          <div className="mt-2 text-xs opacity-70">Press 'F' or click the Fix button above to resolve</div>
+                          <div className="mt-2 text-xs opacity-70">「F」キーを押すか、上部の修正ボタンをクリックして解決してください</div>
                         </div>
                       </div>
                     ) : (
@@ -3520,7 +3521,7 @@ Focus on the key sections and content, making it clean and modern.`;
                                 className="w-16 h-16"
                               />
                               <div className="text-sm font-semibold text-white">
-                                Brand Guidelines
+                                ブランドガイドライン
                               </div>
                             </div>
                           </div>
@@ -3530,7 +3531,7 @@ Focus on the key sections and content, making it clean and modern.`;
                             {msg.metadata.brandingData.colorScheme && (
                               <div className="mb-16">
                                 <div className="text-sm">
-                                  <span className="text-gray-600 font-medium">Mode:</span>{' '}
+                                  <span className="text-gray-600 font-medium">モード:</span>{' '}
                                   <span className="font-semibold text-gray-900 capitalize">{msg.metadata.brandingData.colorScheme}</span>
                                 </div>
                               </div>
@@ -3539,13 +3540,13 @@ Focus on the key sections and content, making it clean and modern.`;
                             {/* Colors */}
                             {msg.metadata.brandingData.colors && (
                               <div className="mb-16">
-                                <div className="text-sm font-semibold text-gray-900 mb-8">Colors</div>
+                                <div className="text-sm font-semibold text-gray-900 mb-8">カラー</div>
                                 <div className="flex flex-wrap gap-12">
                                   {msg.metadata.brandingData.colors.primary && (
                                     <div className="flex items-center gap-8">
                                       <div className="w-32 h-32 rounded border border-gray-300" style={{ backgroundColor: msg.metadata.brandingData.colors.primary }} />
                                       <div className="text-sm">
-                                        <div className="font-semibold text-gray-900">Primary</div>
+                                        <div className="font-semibold text-gray-900">プライマリ</div>
                                         <div className="text-gray-600 font-mono text-xs">{msg.metadata.brandingData.colors.primary}</div>
                                       </div>
                                     </div>
@@ -3554,7 +3555,7 @@ Focus on the key sections and content, making it clean and modern.`;
                                     <div className="flex items-center gap-8">
                                       <div className="w-32 h-32 rounded border border-gray-300" style={{ backgroundColor: msg.metadata.brandingData.colors.accent }} />
                                       <div className="text-sm">
-                                        <div className="font-semibold text-gray-900">Accent</div>
+                                        <div className="font-semibold text-gray-900">アクセント</div>
                                         <div className="text-gray-600 font-mono text-xs">{msg.metadata.brandingData.colors.accent}</div>
                                       </div>
                                     </div>
@@ -3563,7 +3564,7 @@ Focus on the key sections and content, making it clean and modern.`;
                                     <div className="flex items-center gap-8">
                                       <div className="w-32 h-32 rounded border border-gray-300" style={{ backgroundColor: msg.metadata.brandingData.colors.background }} />
                                       <div className="text-sm">
-                                        <div className="font-semibold text-gray-900">Background</div>
+                                        <div className="font-semibold text-gray-900">背景</div>
                                         <div className="text-gray-600 font-mono text-xs">{msg.metadata.brandingData.colors.background}</div>
                                       </div>
                                     </div>
@@ -3572,7 +3573,7 @@ Focus on the key sections and content, making it clean and modern.`;
                                     <div className="flex items-center gap-8">
                                       <div className="w-32 h-32 rounded border border-gray-300" style={{ backgroundColor: msg.metadata.brandingData.colors.textPrimary }} />
                                       <div className="text-sm">
-                                        <div className="font-semibold text-gray-900">Text</div>
+                                        <div className="font-semibold text-gray-900">テキスト</div>
                                         <div className="text-gray-600 font-mono text-xs">{msg.metadata.brandingData.colors.textPrimary}</div>
                                       </div>
                                     </div>
@@ -3584,35 +3585,35 @@ Focus on the key sections and content, making it clean and modern.`;
                             {/* Typography */}
                             {msg.metadata.brandingData.typography && (
                               <div className="mb-16">
-                                <div className="text-sm font-semibold text-gray-900 mb-8">Typography</div>
+                                <div className="text-sm font-semibold text-gray-900 mb-8">タイポグラフィ</div>
                                 <div className="grid grid-cols-2 gap-12 text-sm">
                                   {msg.metadata.brandingData.typography.fontFamilies?.primary && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">Primary:</span>{' '}
+                                      <span className="text-gray-600 font-medium">プライマリ:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.typography.fontFamilies.primary}</span>
                                     </div>
                                   )}
                                   {msg.metadata.brandingData.typography.fontFamilies?.heading && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">Heading:</span>{' '}
+                                      <span className="text-gray-600 font-medium">見出し:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.typography.fontFamilies.heading}</span>
                                     </div>
                                   )}
                                   {msg.metadata.brandingData.typography.fontSizes?.h1 && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">H1 Size:</span>{' '}
+                                      <span className="text-gray-600 font-medium">H1サイズ:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.typography.fontSizes.h1}</span>
                                     </div>
                                   )}
                                   {msg.metadata.brandingData.typography.fontSizes?.h2 && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">H2 Size:</span>{' '}
+                                      <span className="text-gray-600 font-medium">H2サイズ:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.typography.fontSizes.h2}</span>
                                     </div>
                                   )}
                                   {msg.metadata.brandingData.typography.fontSizes?.body && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">Body Size:</span>{' '}
+                                      <span className="text-gray-600 font-medium">本文サイズ:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.typography.fontSizes.body}</span>
                                     </div>
                                   )}
@@ -3623,17 +3624,17 @@ Focus on the key sections and content, making it clean and modern.`;
                             {/* Spacing */}
                             {msg.metadata.brandingData.spacing && (
                               <div className="mb-16">
-                                <div className="text-sm font-semibold text-gray-900 mb-8">Spacing</div>
+                                <div className="text-sm font-semibold text-gray-900 mb-8">スペーシング</div>
                                 <div className="flex flex-wrap gap-16 text-sm">
                                   {msg.metadata.brandingData.spacing.baseUnit && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">Base Unit:</span>{' '}
+                                      <span className="text-gray-600 font-medium">基本単位:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.spacing.baseUnit}px</span>
                                     </div>
                                   )}
                                   {msg.metadata.brandingData.spacing.borderRadius && (
                                     <div>
-                                      <span className="text-gray-600 font-medium">Border Radius:</span>{' '}
+                                      <span className="text-gray-600 font-medium">角丸:</span>{' '}
                                       <span className="font-semibold text-gray-900">{msg.metadata.brandingData.spacing.borderRadius}</span>
                                     </div>
                                   )}
@@ -3644,10 +3645,10 @@ Focus on the key sections and content, making it clean and modern.`;
                             {/* Button Styles */}
                             {msg.metadata.brandingData.components?.buttonPrimary && (
                               <div className="mb-16">
-                                <div className="text-sm font-semibold text-gray-900 mb-8">Button Styles</div>
+                                <div className="text-sm font-semibold text-gray-900 mb-8">ボタンスタイル</div>
                                 <div className="flex flex-wrap gap-12">
                                   <div>
-                                    <div className="text-xs text-gray-600 mb-6 font-medium">Primary Button</div>
+                                    <div className="text-xs text-gray-600 mb-6 font-medium">プライマリボタン</div>
                                     <button
                                       className="px-16 py-8 text-sm font-medium"
                                       style={{
@@ -3657,12 +3658,12 @@ Focus on the key sections and content, making it clean and modern.`;
                                         boxShadow: msg.metadata.brandingData.components.buttonPrimary.shadow
                                       }}
                                     >
-                                      Sample Button
+                                      サンプルボタン
                                     </button>
                                   </div>
                                   {msg.metadata.brandingData.components?.buttonSecondary && (
                                     <div>
-                                      <div className="text-xs text-gray-600 mb-6 font-medium">Secondary Button</div>
+                                      <div className="text-xs text-gray-600 mb-6 font-medium">セカンダリボタン</div>
                                       <button
                                         className="px-16 py-8 text-sm font-medium"
                                         style={{
@@ -3672,7 +3673,7 @@ Focus on the key sections and content, making it clean and modern.`;
                                           boxShadow: msg.metadata.brandingData.components.buttonSecondary.shadow
                                         }}
                                       >
-                                        Sample Button
+                                        サンプルボタン
                                       </button>
                                     </div>
                                   )}
@@ -3683,9 +3684,9 @@ Focus on the key sections and content, making it clean and modern.`;
                             {/* Personality */}
                             {msg.metadata.brandingData.personality && (
                               <div className="text-sm">
-                                <span className="text-gray-600 font-medium">Personality:</span>{' '}
+                                <span className="text-gray-600 font-medium">パーソナリティ:</span>{' '}
                                 <span className="font-semibold text-gray-900 capitalize">
-                                  {msg.metadata.brandingData.personality.tone} tone, {msg.metadata.brandingData.personality.energy} energy
+                                  {msg.metadata.brandingData.personality.tone} トーン、{msg.metadata.brandingData.personality.energy} エネルギー
                                 </span>
                               </div>
                             )}
@@ -3693,7 +3694,7 @@ Focus on the key sections and content, making it clean and modern.`;
                             {/* Target Audience */}
                             {msg.metadata.brandingData.personality?.targetAudience && (
                               <div className="text-sm mt-8">
-                                <span className="text-gray-600 font-medium">Target:</span>{' '}
+                                <span className="text-gray-600 font-medium">ターゲット:</span>{' '}
                                 <span className="text-gray-900">{msg.metadata.brandingData.personality.targetAudience}</span>
                               </div>
                             )}
@@ -3705,7 +3706,7 @@ Focus on the key sections and content, making it clean and modern.`;
                       {msg.metadata?.appliedFiles && msg.metadata.appliedFiles.length > 0 && (
                     <div className="mt-3 inline-block bg-gray-100 rounded-[10px] p-5">
                       <div className="text-sm font-medium mb-3 text-gray-700">
-                        {msg.content.includes('Applied') ? 'Files Updated:' : 'Generated Files:'}
+                        {msg.content.includes('適用しました') ? '更新されたファイル:' : '生成されたファイル:'}
                       </div>
                       <div className="flex flex-wrap items-start gap-2">
                         {msg.metadata.appliedFiles.map((filePath, fileIdx) => {
@@ -3738,7 +3739,7 @@ Focus on the key sections and content, making it clean and modern.`;
                       {/* Show generated files for completion messages - but only if no appliedFiles already shown */}
                       {isGenerationComplete && generationProgress.files.length > 0 && idx === chatMessages.length - 1 && !msg.metadata?.appliedFiles && !chatMessages.some(m => m.metadata?.appliedFiles) && (
                     <div className="mt-2 inline-block bg-gray-100 rounded-[10px] p-3">
-                      <div className="text-xs font-medium mb-1 text-gray-700">Generated Files:</div>
+                      <div className="text-xs font-medium mb-1 text-gray-700">生成されたファイル:</div>
                       <div className="flex flex-wrap items-start gap-1">
                         {generationProgress.files.map((file, fileIdx) => (
                           <div
@@ -3812,7 +3813,7 @@ Focus on the key sections and content, making it clean and modern.`;
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex items-center gap-1">
                         <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                        <span className="text-xs font-medium text-gray-600">AI Response Stream</span>
+                        <span className="text-xs font-medium text-gray-600">AI レスポンスストリーム</span>
                       </div>
                       <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent" />
                     </div>
@@ -3850,7 +3851,7 @@ Focus on the key sections and content, making it clean and modern.`;
               value={aiChatInput}
               onChange={setAiChatInput}
               onSubmit={sendChatMessage}
-              placeholder="Describe what you want to build..."
+              placeholder="作りたいものを記述してください…"
               showSearchFeatures={false}
             />
           </div>
@@ -3874,7 +3875,7 @@ Focus on the key sections and content, making it clean and modern.`;
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
-                    <span>Code</span>
+                    <span>コード</span>
                   </div>
                 </button>
                 <button
@@ -3890,7 +3891,7 @@ Focus on the key sections and content, making it clean and modern.`;
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    <span>View</span>
+                    <span>プレビュー</span>
                   </div>
                 </button>
               </div>
@@ -3899,7 +3900,7 @@ Focus on the key sections and content, making it clean and modern.`;
               {/* Files generated count */}
               {activeTab === 'generation' && !generationProgress.isEdit && generationProgress.files.length > 0 && (
                 <div className="text-gray-500 text-xs font-medium">
-                  {generationProgress.files.length} files generated
+                  {generationProgress.files.length} 個のファイルを生成
                 </div>
               )}
               
@@ -3907,7 +3908,7 @@ Focus on the key sections and content, making it clean and modern.`;
               {activeTab === 'generation' && generationProgress.isGenerating && (
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 border border-gray-200 rounded-md text-xs font-medium text-gray-700">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  {generationProgress.isEdit ? 'Editing code' : 'Live generation'}
+                  {generationProgress.isEdit ? 'コードを編集中' : 'ライブ生成中'}
                 </div>
               )}
               
@@ -3915,17 +3916,17 @@ Focus on the key sections and content, making it clean and modern.`;
               {sandboxData && (
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 border border-gray-200 rounded-md text-xs font-medium text-gray-700">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                  Sandbox active
+                  サンドボックス稼働中
                 </div>
               )}
-              
+
               {/* Open in new tab button */}
               {sandboxData && (
-                <a 
-                  href={sandboxData.url} 
-                  target="_blank" 
+                <a
+                  href={sandboxData.url}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  title="Open in new tab"
+                  title="新しいタブで開く"
                   className="p-1.5 rounded-md transition-all text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 >
                   <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -3951,7 +3952,7 @@ Focus on the key sections and content, making it clean and modern.`;
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">読み込み中…</div>}>
       <AISandboxPage />
     </Suspense>
   );

@@ -6,7 +6,7 @@ import Button from "@/components/shared/button/Button";
 
 export default function HeroInputSubmitButton({
   dirty,
-  buttonText = "Re-imagine Site",
+  buttonText = "サイトを再構想",
   disabled = false,
 }: {
   dirty: boolean;

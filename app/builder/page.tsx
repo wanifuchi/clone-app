@@ -9,7 +9,7 @@ export default function BuilderPage() {
   const [selectedStyle, setSelectedStyle] = useState<string>("modern");
   const [isLoading, setIsLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState<string>("");
-  const [progress, setProgress] = useState<string>("Initializing...");
+  const [progress, setProgress] = useState<string>("初期化中…");
   const [generatedCode, setGeneratedCode] = useState<string>("");
   const router = useRouter();
 
@@ -33,7 +33,7 @@ export default function BuilderPage() {
 
   const generateWebsite = async (url: string, style: string) => {
     try {
-      setProgress("Analyzing website...");
+      setProgress("ウェブサイトを解析中…");
       
       // For demo purposes, we'll generate a simple HTML template
       // In production, this would call the actual scraping and generation APIs
@@ -191,16 +191,16 @@ export default function BuilderPage() {
       const blobUrl = URL.createObjectURL(blob);
       setPreviewUrl(blobUrl);
       
-      setProgress("Website ready!");
+      setProgress("ウェブサイトの準備ができました！");
       setIsLoading(false);
-      
+
       // Show success message
-      toast.success("Website generated successfully!");
-      
+      toast.success("ウェブサイトを生成しました！");
+
     } catch (error) {
       console.error("Error generating website:", error);
-      toast.error("Failed to generate website. Please try again.");
-      setProgress("Error occurred");
+      toast.error("ウェブサイトの生成に失敗しました。もう一度お試しください。");
+      setProgress("エラーが発生しました");
       setTimeout(() => router.push('/'), 2000);
     }
   };
@@ -215,7 +215,7 @@ export default function BuilderPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success("Code downloaded!");
+    toast.success("コードをダウンロードしました！");
   };
 
   return (
@@ -223,40 +223,40 @@ export default function BuilderPage() {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className="w-80 bg-white border-r border-border-faint p-24 flex flex-col">
-          <h2 className="text-title-small font-semibold mb-16">Building Your Website</h2>
-          
+          <h2 className="text-title-small font-semibold mb-16">ウェブサイトを構築中</h2>
+
           <div className="space-y-12 flex-1">
             <div>
-              <div className="text-label-small text-black-alpha-56 mb-4">Target URL</div>
+              <div className="text-label-small text-black-alpha-56 mb-4">対象URL</div>
               <div className="text-body-medium text-accent-black truncate">{targetUrl}</div>
             </div>
-            
+
             <div>
-              <div className="text-label-small text-black-alpha-56 mb-4">Style</div>
+              <div className="text-label-small text-black-alpha-56 mb-4">スタイル</div>
               <div className="text-body-medium text-accent-black capitalize">{selectedStyle}</div>
             </div>
-            
+
             <div>
-              <div className="text-label-small text-black-alpha-56 mb-4">Status</div>
+              <div className="text-label-small text-black-alpha-56 mb-4">ステータス</div>
               <div className="text-body-medium text-heat-100">{progress}</div>
             </div>
           </div>
-          
+
           <div className="space-y-8">
             {!isLoading && (
               <button
                 onClick={downloadCode}
                 className="w-full py-12 px-16 bg-heat-100 hover:bg-heat-200 text-white rounded-10 text-label-medium transition-all"
               >
-                Download Code
+                コードをダウンロード
               </button>
             )}
-            
+
             <button
               onClick={() => router.push('/')}
               className="w-full py-12 px-16 bg-black-alpha-4 hover:bg-black-alpha-6 rounded-10 text-label-medium transition-all"
             >
-              Start Over
+              最初からやり直す
             </button>
           </div>
         </div>
@@ -275,7 +275,7 @@ export default function BuilderPage() {
               <iframe
                 src={previewUrl}
                 className="w-full h-full border-0"
-                title="Website Preview"
+                title="ウェブサイトプレビュー"
               />
             )
           )}

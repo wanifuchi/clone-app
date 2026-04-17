@@ -63,14 +63,14 @@ export default function HomePage() {
   };
 
   const styles = [
-    { id: "1", name: "Glassmorphism", description: "Frosted glass effect" },
-    { id: "2", name: "Neumorphism", description: "Soft 3D shadows" },
-    { id: "3", name: "Brutalism", description: "Bold and raw" },
-    { id: "4", name: "Minimalist", description: "Clean and simple" },
-    { id: "5", name: "Dark Mode", description: "Dark theme design" },
-    { id: "6", name: "Gradient Rich", description: "Vibrant gradients" },
-    { id: "7", name: "3D Depth", description: "Dimensional layers" },
-    { id: "8", name: "Retro Wave", description: "80s inspired" },
+    { id: "1", name: "ガラスモーフィズム", description: "すりガラス風のエフェクト" },
+    { id: "2", name: "ニューモーフィズム", description: "柔らかな3Dシャドウ" },
+    { id: "3", name: "ブルータリズム", description: "大胆でラフな表現" },
+    { id: "4", name: "ミニマリスト", description: "クリーンでシンプル" },
+    { id: "5", name: "ダークモード", description: "ダークテーマデザイン" },
+    { id: "6", name: "グラデーションリッチ", description: "鮮やかなグラデーション" },
+    { id: "7", name: "3D奥行き", description: "立体的なレイヤー" },
+    { id: "8", name: "レトロウェーブ", description: "80年代風" },
   ];
 
   const models = appConfig.ai.availableModels.map(model => ({
@@ -82,13 +82,13 @@ export default function HomePage() {
     const inputValue = url.trim();
 
     if (!inputValue) {
-      toast.error("Please enter a URL or search term");
+      toast.error("URL または検索ワードを入力してください");
       return;
     }
 
     // Validate brand extension mode requirements
     if (extendBrandStyles && isURL(inputValue) && !additionalInstructions.trim()) {
-      toast.error("Please describe what you want to build with this brand's styles");
+      toast.error("このブランドのスタイルで何を作りたいかを記述してください");
       return;
     }
     
@@ -263,7 +263,7 @@ export default function HomePage() {
                 href="#"
                 onClick={(e) => e.preventDefault()}
               >
-                Built for the clone era.
+                クローン時代のために作られました。
               </Link>
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function HomePage() {
                       
                       {/* Selection message */}
                       <div className="flex-1 text-body-input text-accent-black">
-                        Select which site to clone from the results below
+                        下の検索結果からクローンするサイトを選択してください
                       </div>
                       
                       {/* Search again button */}
@@ -337,7 +337,7 @@ export default function HomePage() {
                         >
                           <path d="M14 14L10 10M11 6.5C11 9 9 11 6.5 11C4 11 2 9 2 6.5C2 4 4 2 6.5 2C9 2 11 4 11 6.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                         </svg>
-                        <span>Search Again</span>
+                        <span>再検索</span>
                       </button>
                     </>
                   ) : (
@@ -371,7 +371,7 @@ export default function HomePage() {
                       )}
                       <input
                         className="flex-1 bg-transparent text-body-input text-accent-black placeholder:text-black-alpha-48 focus:outline-none focus:ring-0 focus:border-transparent"
-                        placeholder="Enter URL or search term..."
+                        placeholder="URLまたは検索ワードを入力…"
                         type="text"
                         value={url}
                         disabled={isSearching}
@@ -407,9 +407,9 @@ export default function HomePage() {
                         }}
                         className={isSearching ? 'pointer-events-none' : ''}
                       >
-                        <HeroInputSubmitButton 
-                          dirty={url.length > 0} 
-                          buttonText={isURL(url) ? 'Scrape Site' : 'Search'} 
+                        <HeroInputSubmitButton
+                          dirty={url.length > 0}
+                          buttonText={isURL(url) ? 'サイトを取得' : '検索'}
                           disabled={isSearching}
                         />
                       </div>
@@ -431,7 +431,7 @@ export default function HomePage() {
                           <div className="flex select-none">
                             <div className="flex lg-max:flex-col whitespace-nowrap flex-wrap min-w-0 gap-8 lg:justify-between flex-1">
                               <div className="text-xs font-medium text-black-alpha-72 transition-all group-hover:text-accent-black relative">
-                                Extend brand styles
+                                ブランドスタイルを拡張する
                               </div>
                             </div>
                           </div>
@@ -473,7 +473,7 @@ export default function HomePage() {
                           <textarea
                             value={additionalInstructions}
                             onChange={(e) => setAdditionalInstructions(e.target.value)}
-                            placeholder="Describe the new functionality you want to build using this brand's styles..."
+                            placeholder="このブランドのスタイルを使って構築したい新機能を記述してください…"
                             className="w-full px-4 py-10 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-[var(--clone-cyan-100)] focus:outline-none focus:ring-1 focus:ring-[var(--clone-cyan-100)] placeholder:text-gray-400 min-h-[80px] resize-none"
                           />
                         </div>
@@ -536,7 +536,7 @@ export default function HomePage() {
                           <input
                             type="text"
                             className="flex-1 px-3 py-2.5 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-[var(--clone-cyan-100)] focus:outline-none focus:ring-1 focus:ring-[var(--clone-cyan-100)] placeholder:text-gray-400"
-                            placeholder="Additional instructions (optional)"
+                            placeholder="追加の指示（任意）"
                             onChange={(e) => sessionStorage.setItem('additionalInstructions', e.target.value)}
                           />
                         )}
@@ -645,7 +645,7 @@ export default function HomePage() {
                                 <textarea
                                   value={additionalInstructions}
                                   onChange={(e) => setAdditionalInstructions(e.target.value)}
-                                  placeholder="Describe your customizations..."
+                                  placeholder="カスタマイズ内容を記述してください…"
                                   className="flex-1 bg-transparent text-body-input text-accent-black placeholder:text-black-alpha-48 focus:outline-none focus:ring-0 focus:border-transparent resize-none min-h-[60px]"
                                   autoFocus
                                   onClick={(e) => e.stopPropagation()}
@@ -702,7 +702,7 @@ export default function HomePage() {
                                   `}
                                 >
                                   {additionalInstructions.trim() && <div className="button-background absolute inset-0 rounded-10 pointer-events-none" />}
-                                  <span className="px-6 relative">Apply & Clone</span>
+                                  <span className="px-6 relative">適用してクローン</span>
                                   <svg 
                                     width="20" 
                                     height="20" 
@@ -722,7 +722,7 @@ export default function HomePage() {
                           <>
                             <div className="text-white text-center mb-3">
                               <p className="text-base font-semibold mb-0.5">{result.title}</p>
-                              <p className="text-[11px] opacity-80">Choose how to clone this site</p>
+                              <p className="text-[11px] opacity-80">このサイトのクローン方法を選択してください</p>
                             </div>
                             
                             <div className="flex gap-3 justify-center">
@@ -745,7 +745,7 @@ export default function HomePage() {
                                 >
                                   <path d="M11.6667 4.79163L16.875 9.99994M16.875 9.99994L11.6667 15.2083M16.875 9.99994H3.125" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/>
                                 </svg>
-                                <span className="px-6 relative">Instant Clone</span>
+                                <span className="px-6 relative">即クローン</span>
                               </button>
                               
                               {/* Instructions Button - Gray style */}
@@ -768,7 +768,7 @@ export default function HomePage() {
                                   <path d="M5 5H15M5 10H15M5 15H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                                   <path d="M14 14L16 16L14 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                 </svg>
-                                <span className="px-6">Add Instructions</span>
+                                <span className="px-6">指示を追加</span>
                               </button>
                             </div>
                           </>
@@ -821,8 +821,8 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 text-lg">No results found</p>
-                  <p className="text-gray-400 text-sm mt-1">Try a different search term</p>
+                  <p className="text-gray-500 text-lg">結果が見つかりませんでした</p>
+                  <p className="text-gray-400 text-sm mt-1">別の検索ワードでお試しください</p>
                 </div>
               </div>
             )}

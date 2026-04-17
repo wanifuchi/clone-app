@@ -7,9 +7,9 @@ declare global {
 export async function POST() {
   try {
     if (!global.activeSandbox) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'No active sandbox' 
+      return NextResponse.json({
+        success: false,
+        error: '有効なサンドボックスがありません'
       }, { status: 400 });
     }
     
@@ -54,7 +54,7 @@ export async function POST() {
       success: true,
       dataUrl,
       fileName: 'vercel-sandbox-project.zip',
-      message: 'Zip file created successfully'
+      message: 'ZIP ファイルの作成に成功しました'
     });
     
   } catch (error) {
