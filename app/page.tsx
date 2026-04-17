@@ -33,7 +33,7 @@ interface SearchResult {
 
 export default function HomePage() {
   const [url, setUrl] = useState<string>("");
-  const [selectedStyle, setSelectedStyle] = useState<string>("1");
+  const [selectedStyle, setSelectedStyle] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>(appConfig.ai.defaultModel);
   const [isValidUrl, setIsValidUrl] = useState<boolean>(false);
   const [showSearchTiles, setShowSearchTiles] = useState<boolean>(false);
@@ -45,6 +45,7 @@ export default function HomePage() {
   const [showInstructionsForIndex, setShowInstructionsForIndex] = useState<number | null>(null);
   const [additionalInstructions, setAdditionalInstructions] = useState<string>('');
   const [extendBrandStyles, setExtendBrandStyles] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const router = useRouter();
   
   // Simple URL validation
@@ -98,7 +99,8 @@ export default function HomePage() {
       // Wait for fade animation
       setTimeout(() => {
         sessionStorage.setItem('targetUrl', selectedResult.url);
-        sessionStorage.setItem('selectedStyle', selectedStyle);
+        if (selectedStyle) sessionStorage.setItem('selectedStyle', selectedStyle);
+        else sessionStorage.removeItem('selectedStyle');
         sessionStorage.setItem('selectedModel', selectedModel);
         sessionStorage.setItem('autoStart', 'true');
         if (selectedResult.markdown) {
@@ -108,7 +110,7 @@ export default function HomePage() {
       }, 500);
       return;
     }
-    
+
     // If it's a URL, check if we're extending brand styles or cloning
     if (isURL(inputValue)) {
       if (extendBrandStyles) {
@@ -120,9 +122,15 @@ export default function HomePage() {
         sessionStorage.setItem('brandExtensionPrompt', additionalInstructions || '');
         router.push('/generation');
       } else {
-        // Normal clone mode
+        // Normal clone mode — default has no style; only persist when user picked one
         sessionStorage.setItem('targetUrl', inputValue);
-        sessionStorage.setItem('selectedStyle', selectedStyle);
+        if (selectedStyle) sessionStorage.setItem('selectedStyle', selectedStyle);
+        else sessionStorage.removeItem('selectedStyle');
+        if (additionalInstructions.trim()) {
+          sessionStorage.setItem('additionalInstructions', additionalInstructions);
+        } else {
+          sessionStorage.removeItem('additionalInstructions');
+        }
         sessionStorage.setItem('selectedModel', selectedModel);
         sessionStorage.setItem('autoStart', 'true');
         router.push('/generation');
@@ -409,9 +417,35 @@ export default function HomePage() {
                   )}
                 </div>
 
-                {/* Options Section - Only show when valid URL */}
+                {/* Advanced options disclosure — collapsed by default, only visible once URL is valid */}
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isValidUrl ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+                }`}>
+                  <div className="px-[28px] pb-[16px] flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowAdvanced((v) => !v)}
+                      className="text-[11px] tracking-wide uppercase text-[var(--clone-text-dim)] hover:text-[var(--clone-cyan-100)] transition-colors flex items-center gap-6 py-6 px-10 rounded-md"
+                      aria-expanded={showAdvanced ? 'true' : 'false'}
+                    >
+                      <span>詳細オプション</span>
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 10 10"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
+                      >
+                        <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Options Section - only when URL valid AND user opted in */}
                 <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  isValidUrl ? (extendBrandStyles ? 'max-h-[400px]' : 'max-h-[300px]') + ' opacity-100' : 'max-h-0 opacity-0'
+                  isValidUrl && showAdvanced ? (extendBrandStyles ? 'max-h-[400px]' : 'max-h-[300px]') + ' opacity-100' : 'max-h-0 opacity-0'
                 }`}>
                   <div className="px-[28px] pt-0 pb-[28px]">
                     <div className="border-t border-gray-100 bg-white">
@@ -529,7 +563,8 @@ export default function HomePage() {
                             type="text"
                             className="flex-1 px-3 py-2.5 text-xs font-medium text-gray-700 bg-gray-50 rounded border border-gray-200 focus:border-[var(--clone-cyan-100)] focus:outline-none focus:ring-1 focus:ring-[var(--clone-cyan-100)] placeholder:text-gray-400"
                             placeholder="追加の指示（任意）"
-                            onChange={(e) => sessionStorage.setItem('additionalInstructions', e.target.value)}
+                            value={additionalInstructions}
+                            onChange={(e) => setAdditionalInstructions(e.target.value)}
                           />
                         )}
                       </div>
