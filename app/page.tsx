@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -258,13 +257,6 @@ export default function HomePage() {
 
             <div className="relative container px-16">
               <HomeHeroTitle />
-              <Link
-                className="bg-black-alpha-4 hover:bg-black-alpha-6 rounded-6 px-8 lg:px-6 text-label-large h-30 lg:h-24 block mt-8 mx-auto w-max gap-4 transition-all text-[var(--clone-text-dim)] hover:text-[var(--clone-cyan-100)]"
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >
-                クローン時代のために作られました。
-              </Link>
             </div>
           </div>
 
