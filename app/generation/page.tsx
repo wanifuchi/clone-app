@@ -641,16 +641,26 @@ function AISandboxPage() {
       }
       
       // Use streaming endpoint for real-time feedback
+      // Resolve sandboxId from override → React state → URL params → sessionStorage (most resilient)
+      const urlSandboxId = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('sandbox')
+        : null;
       const effectiveSandboxData = overrideSandboxData || sandboxData;
+      const resolvedSandboxId = effectiveSandboxData?.sandboxId || urlSandboxId || undefined;
+
+      if (!resolvedSandboxId) {
+        console.warn('[applyGeneratedCode] No sandboxId available; server may create a new sandbox');
+      }
+
       const response = await fetch('/api/apply-ai-code-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           response: code,
           isEdit: isEdit,
           packages: pendingPackages,
-          sandboxId: effectiveSandboxData?.sandboxId // Pass the sandbox ID to ensure proper connection
-        })
+          sandboxId: resolvedSandboxId,
+        }),
       });
       
       if (!response.ok) {
@@ -2150,7 +2160,12 @@ function AISandboxPage() {
 
 
   const downloadZip = async () => {
-    if (!sandboxData) {
+    const urlSandboxId = typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('sandbox')
+      : null;
+    const resolvedSandboxId = sandboxData?.sandboxId || urlSandboxId;
+
+    if (!resolvedSandboxId) {
       addChatMessage('ダウンロードの前にサンドボックスの作成完了をお待ちください。', 'system');
       return;
     }
@@ -2163,7 +2178,7 @@ function AISandboxPage() {
       const response = await fetch('/api/create-zip', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sandboxId: sandboxData.sandboxId }),
+        body: JSON.stringify({ sandboxId: resolvedSandboxId }),
       });
       
       const data = await response.json();
