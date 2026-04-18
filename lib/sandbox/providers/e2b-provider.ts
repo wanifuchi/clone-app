@@ -11,9 +11,18 @@ export class E2BProvider extends SandboxProvider {
    */
   async reconnect(sandboxId: string): Promise<boolean> {
     try {
-      this.sandbox = await Sandbox.connect(sandboxId, {
-        apiKey: this.config.e2b?.apiKey || process.env.E2B_API_KEY,
-      });
+      const apiKey = this.config.e2b?.apiKey || process.env.E2B_API_KEY;
+      if (!apiKey) {
+        console.error('[E2BProvider] No E2B_API_KEY available for reconnect');
+        return false;
+      }
+
+      console.log(`[E2BProvider] Reconnecting to sandbox ${sandboxId}...`);
+      this.sandbox = await Sandbox.connect(sandboxId, { apiKey });
+
+      if (typeof this.sandbox.setTimeout === 'function') {
+        this.sandbox.setTimeout(appConfig.e2b.timeoutMs);
+      }
 
       const host = (this.sandbox as any).getHost(appConfig.e2b.vitePort);
 
@@ -24,9 +33,13 @@ export class E2BProvider extends SandboxProvider {
         createdAt: new Date(),
       };
 
+      console.log(`[E2BProvider] Reconnected to ${sandboxId} at https://${host}`);
       return true;
     } catch (error) {
-      console.error(`[E2BProvider] Failed to reconnect to sandbox ${sandboxId}:`, error);
+      const err = error as Error;
+      console.error(
+        `[E2BProvider] Failed to reconnect to sandbox ${sandboxId}: ${err.name}: ${err.message}`,
+      );
       return false;
     }
   }

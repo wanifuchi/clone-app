@@ -2681,8 +2681,15 @@ function AISandboxPage() {
       'system'
     );
     
-    // Start creating sandbox and capturing screenshot immediately in parallel
-    const sandboxPromise = !sandboxData ? createSandbox(true) : Promise.resolve(null);
+    // Start creating sandbox and capturing screenshot immediately in parallel.
+    // Check URL params as well to avoid racing with an in-flight createSandbox
+    // triggered by initializePage (React state may still be null here).
+    const urlSandboxId = typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('sandbox')
+      : null;
+    const sandboxPromise = !sandboxData && !urlSandboxId
+      ? createSandbox(true)
+      : Promise.resolve(null);
     
     // Set loading stage immediately before hiding home screen
     setLoadingStage('gathering');
