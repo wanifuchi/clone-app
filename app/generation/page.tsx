@@ -2998,27 +2998,33 @@ Focus on building something NEW, minimal, and functional that perfectly matches 
             }
           }
 
-          prompt = `I want to recreate the ${url} website as a complete React application based on the scraped content below.
+          prompt = `Build a FAITHFUL VISUAL CLONE of ${url}, not a redesign or modern reinterpretation. Reproduce the original layout, structure, color palette, density, typography hierarchy, and section order as closely as possible from the scraped data below.
 
+SCRAPED SOURCE (markdown + metadata):
 ${JSON.stringify(scrapeData, null, 2)}
 
-${filteredContext ? `ADDITIONAL CONTEXT/REQUIREMENTS FROM USER:
+${filteredContext ? `USER ADDITIONAL CONTEXT:
 ${filteredContext}
+` : ''}
+CLONE RULES — STRICT:
+- This is a CLONE. Preserve the original site's identity, do NOT invent new copy or marketing taglines.
+- Keep the SAME sections in the SAME ORDER as they appear in the source markdown.
+- Use the EXACT Japanese (or original-language) wording from the source. Do not translate, summarize, or paraphrase.
+- Match the original's information density: lists of links should stay as lists of links, news items should stay as news items, NOT be reformatted into hero cards.
+- Use Tailwind classes that approximate the original styling: original colors, original font weights, original whitespace. Avoid heavy gradients, glassmorphism, or generic SaaS landing-page styling.
+- DO NOT add a giant centered hero with marketing copy unless the original has one.
+- DO NOT add CTAs ("Sign up", "Get started") that aren't in the source.
+- If the source shows a small search input, render a small search input — not a large hero search.
+- Reuse the original brand colors visible in the markdown (e.g. for Yahoo! JAPAN keep the red logo).
+- Layout should be the same column structure as the original (e.g. multi-column news + sidebar if applicable, not a single centered column).
 
-Please incorporate these requirements into the design and implementation.` : ''}
-
-IMPORTANT INSTRUCTIONS:
-- Create a COMPLETE, working React application
-- Implement ALL sections and features from the original site
-- Use Tailwind CSS for all styling (no custom CSS files)
-- Make it responsive and modern
-- Ensure all text content matches the original
-- Create proper component structure
-- Make sure the app actually renders visible content
-- Create ALL components that you reference in imports
-${filteredContext ? '- Apply the user\'s context/theme requirements throughout the application' : ''}
-
-Focus on the key sections and content, making it clean and modern.`;
+OUTPUT REQUIREMENTS:
+- Complete, working React + Vite + Tailwind app.
+- Generate src/index.css first, then src/App.jsx, then EVERY component referenced from App.jsx.
+- Do NOT import a component you don't generate.
+- Use only Tailwind classes (no custom CSS files beyond index.css).
+- Render real visible content.
+${filteredContext ? '- Layer the user additional context on top of the faithful clone, do not let it override the cloning intent.' : ''}`;
         }
 
         setGenerationProgress(prev => ({

@@ -576,7 +576,10 @@ Remember: You are a SURGEON making a precise incision, not an artist repainting 
         }
         
         // Build system prompt with conversation awareness
-        let systemPrompt = `You are an expert React developer with perfect memory of the conversation. You maintain context across messages and remember scraped websites, generated components, and applied code. Generate clean, modern React code for Vite applications.
+        let systemPrompt = `You are an expert React developer with perfect memory of the conversation. You maintain context across messages and remember scraped websites, generated components, and applied code. Generate working React code for Vite applications.
+
+WHEN THE USER ASKS YOU TO CLONE A WEBSITE: produce a faithful visual reproduction. Do NOT redesign, modernize, or convert it into a generic SaaS landing page. Preserve the original layout, density, color palette, copy, and section ordering. Use the original Japanese / source-language text verbatim. Do not invent marketing taglines or CTAs that aren't in the source.
+
 ${conversationContext}
 
 🚨 CRITICAL RULES - YOUR MOST IMPORTANT INSTRUCTIONS:
