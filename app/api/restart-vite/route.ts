@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { sandboxManager } from '@/lib/sandbox/sandbox-manager';
 
 declare global {
   var activeSandbox: any;
@@ -9,15 +10,23 @@ declare global {
 
 const RESTART_COOLDOWN_MS = 5000; // 5 second cooldown between restarts
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    // Check both v1 and v2 global references
-    const provider = global.activeSandbox || global.activeSandboxProvider;
-    
+    const { sandboxId } = await request.json().catch(() => ({ sandboxId: undefined }));
+
+    let provider: any = sandboxId ? sandboxManager.getProvider(sandboxId) : sandboxManager.getActiveProvider();
+    if (!provider) provider = global.activeSandboxProvider || global.activeSandbox;
+    if (!provider && sandboxId) {
+      console.log(`[restart-vite] Reconnecting to ${sandboxId}`);
+      provider = await sandboxManager.getOrCreateProvider(sandboxId);
+      if (!provider?.getSandboxInfo()) provider = null;
+      else sandboxManager.registerSandbox(sandboxId, provider);
+    }
+
     if (!provider) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'No active sandbox' 
+      return NextResponse.json({
+        success: false,
+        error: 'No active sandbox'
       }, { status: 400 });
     }
     

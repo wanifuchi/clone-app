@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sandboxManager } from '@/lib/sandbox/sandbox-manager';
 
 declare global {
   var activeSandbox: any;
@@ -8,42 +9,56 @@ declare global {
 
 export async function POST(request: NextRequest) {
   try {
-    const { packages } = await request.json();
-    // sandboxId not used - using global sandbox
-    
+    const { packages, sandboxId } = await request.json();
+
     if (!packages || !Array.isArray(packages) || packages.length === 0) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Packages array is required' 
+      return NextResponse.json({
+        success: false,
+        error: 'Packages array is required'
       }, { status: 400 });
     }
-    
+
     // Validate and deduplicate package names
     const validPackages = [...new Set(packages)]
       .filter(pkg => pkg && typeof pkg === 'string' && pkg.trim() !== '')
       .map(pkg => pkg.trim());
-    
+
     if (validPackages.length === 0) {
       return NextResponse.json({
         success: false,
         error: 'No valid package names provided'
       }, { status: 400 });
     }
-    
+
     // Log if duplicates were found
     if (packages.length !== validPackages.length) {
       console.log(`[install-packages] Cleaned packages: removed ${packages.length - validPackages.length} invalid/duplicate entries`);
       console.log(`[install-packages] Original:`, packages);
       console.log(`[install-packages] Cleaned:`, validPackages);
     }
-    
-    // Get active sandbox provider
-    const provider = global.activeSandboxProvider;
-    
+
+    // Resolve provider — prefer sandboxManager (with E2B reconnect) over the
+    // legacy in-process global which doesn't survive Vercel serverless cold
+    // starts.
+    let provider: any = sandboxId ? sandboxManager.getProvider(sandboxId) : sandboxManager.getActiveProvider();
+    if (!provider) provider = global.activeSandboxProvider;
+    if (!provider && sandboxId) {
+      console.log(`[install-packages] No provider in manager, attempting reconnect for ${sandboxId}`);
+      provider = await sandboxManager.getOrCreateProvider(sandboxId);
+      if (!provider?.getSandboxInfo()) {
+        return NextResponse.json({
+          success: false,
+          error: `Sandbox ${sandboxId} could not be reconnected`
+        }, { status: 400 });
+      }
+      sandboxManager.registerSandbox(sandboxId, provider);
+      global.activeSandboxProvider = provider;
+    }
+
     if (!provider) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'No active sandbox provider available' 
+      return NextResponse.json({
+        success: false,
+        error: 'No active sandbox provider available'
       }, { status: 400 });
     }
     
