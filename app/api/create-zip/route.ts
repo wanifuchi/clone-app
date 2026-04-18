@@ -20,14 +20,15 @@ export async function POST(request: NextRequest) {
       provider = await sandboxManager.getOrCreateProvider(sandboxId);
     }
 
-    if (!(provider instanceof E2BProvider)) {
+    const rawGetter = (provider as any).getRawSandbox;
+    if (typeof rawGetter !== 'function') {
       return NextResponse.json(
         { success: false, error: 'ZIP download is only supported for E2B sandboxes' },
         { status: 400 }
       );
     }
 
-    const sandbox = provider.getRawSandbox();
+    const sandbox = (provider as E2BProvider).getRawSandbox();
     if (!sandbox) {
       return NextResponse.json(
         { success: false, error: '有効なサンドボックスがありません' },
