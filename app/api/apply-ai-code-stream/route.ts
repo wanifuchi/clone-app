@@ -285,9 +285,13 @@ function isLikelyTruncatedJsx(path: string, content: string): boolean {
   const trimmed = content.trimEnd();
   // Mid-attribute cutoff like `<div className="text`
   if (/="[^"\n]*$/.test(trimmed)) return true;
-  // Mid-JSX text content at EOF like `<div>Hello` with no closer
-  if (/<[A-Za-z][^<>]*$/.test(trimmed)) return true;
-  // Check matching braces — a lone unterminated opener is a red flag
+  // Any unclosed angle bracket at EOF: `<span`, `</span`, `<div className="x`, etc.
+  if (/<[^>\n]*$/.test(trimmed)) return true;
+  // Unbalanced < and > — a healthy JSX file should have equal pairs
+  const openAngles = (content.match(/</g) || []).length;
+  const closeAngles = (content.match(/>/g) || []).length;
+  if (openAngles > closeAngles) return true;
+  // Unbalanced braces / parens beyond normal tolerance
   const openBraces = (content.match(/\{/g) || []).length;
   const closeBraces = (content.match(/\}/g) || []).length;
   const openParens = (content.match(/\(/g) || []).length;
