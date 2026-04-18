@@ -258,7 +258,57 @@ function parseAIResponse(response: string): ParsedResponse {
     sections.template = templResult[1].trim();
   }
 
+  // Final pass: make sure every import from every (possibly-deduped) file
+  // is reflected in sections.packages. The earlier per-file extraction runs
+  // on every regex match, so truncated early chunks can win the log even if
+  // the complete file later contains additional imports.
+  for (const file of sections.files) {
+    const filePackages = extractPackagesFromCode(file.content);
+    for (const pkg of filePackages) {
+      if (!sections.packages.includes(pkg)) {
+        sections.packages.push(pkg);
+        console.log(`[apply-ai-code-stream] 📦 Package detected (final pass): ${pkg}`);
+      }
+    }
+  }
+
   return sections;
+}
+
+/**
+ * Detect whether a .jsx / .js file content is likely truncated mid-parse.
+ * Vite / esbuild will 500 on these, leaving the preview blank for everything
+ * that imports them. Returning true swaps the content with a safe stub.
+ */
+function isLikelyTruncatedJsx(path: string, content: string): boolean {
+  if (!/\.(jsx|tsx|js|ts)$/.test(path)) return false;
+  const trimmed = content.trimEnd();
+  // Mid-attribute cutoff like `<div className="text`
+  if (/="[^"\n]*$/.test(trimmed)) return true;
+  // Mid-JSX text content at EOF like `<div>Hello` with no closer
+  if (/<[A-Za-z][^<>]*$/.test(trimmed)) return true;
+  // Check matching braces — a lone unterminated opener is a red flag
+  const openBraces = (content.match(/\{/g) || []).length;
+  const closeBraces = (content.match(/\}/g) || []).length;
+  const openParens = (content.match(/\(/g) || []).length;
+  const closeParens = (content.match(/\)/g) || []).length;
+  if (openBraces - closeBraces > 2) return true;
+  if (openParens - closeParens > 2) return true;
+  // Missing a default export in a component file is usually truncation
+  if (/\.(jsx|tsx)$/.test(path) && !/export\s+default/.test(content)) return true;
+  return false;
+}
+
+function buildStubComponent(name: string): string {
+  return `export default function ${name}() {
+  return (
+    <section className="p-8 my-4 border border-dashed border-gray-400 rounded-md text-gray-500 text-sm bg-gray-50">
+      <p className="font-medium text-gray-700">${name}</p>
+      <p>このセクションは生成が途中で途切れたため自動的にプレースホルダーに置き換えられました。</p>
+    </section>
+  );
+}
+`;
 }
 
 export async function POST(request: NextRequest) {
@@ -626,6 +676,14 @@ export async function POST(request: NextRequest) {
               // Replace any other non-existent shadow utilities
               fileContent = fileContent.replace(/shadow-4xl/g, 'shadow-2xl');
               fileContent = fileContent.replace(/shadow-5xl/g, 'shadow-2xl');
+            }
+
+            // If the AI output was cut off mid-file, replace with a stub so
+            // Vite can still transform the bundle instead of 500-ing.
+            if (isLikelyTruncatedJsx(normalizedPath, fileContent)) {
+              const stubName = (normalizedPath.split('/').pop() || 'Component').replace(/\.(jsx|tsx|js|ts)$/, '');
+              console.warn(`[apply-ai-code-stream] Replacing truncated file ${normalizedPath} with stub`);
+              fileContent = buildStubComponent(stubName);
             }
 
             // Create directory if needed
