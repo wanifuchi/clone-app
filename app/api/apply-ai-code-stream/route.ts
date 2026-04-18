@@ -669,6 +669,60 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Step 2.5: Detect components that App.jsx imports but AI forgot to generate.
+        // Without this, Vite fails with "Failed to resolve import" and the preview stays blank.
+        try {
+          const appFile = parsed.files.find(
+            (f) => f.path === 'src/App.jsx' || f.path === 'App.jsx' || f.path === 'src/App.tsx',
+          );
+          if (appFile) {
+            const importRegex = /import\s+(?:\w+|\{[^}]+\})\s+from\s+['"]([^'"]+)['"]/g;
+            const writtenPaths = new Set(parsed.files.map((f) => f.path));
+            const missingStubs: Array<{ path: string; name: string }> = [];
+            let imp: RegExpExecArray | null;
+            while ((imp = importRegex.exec(appFile.content)) !== null) {
+              const rel = imp[1];
+              if (!rel.startsWith('./') && !rel.startsWith('../')) continue;
+              if (rel.endsWith('.css') || rel.endsWith('.json')) continue;
+              const base = rel.replace(/^\.\//, 'src/').replace(/^\.\.\//, '');
+              const candidates = [base + '.jsx', base + '.js', base + '/index.jsx', base + '/index.js'];
+              if (candidates.some((c) => writtenPaths.has(c))) continue;
+              const targetPath = base + '.jsx';
+              const name = (targetPath.split('/').pop() || 'Stub').replace(/\.jsx$/, '');
+              missingStubs.push({ path: targetPath, name });
+            }
+
+            for (const stub of missingStubs) {
+              const stubContent = `export default function ${stub.name}() {
+  return (
+    <section className="p-8 my-4 border border-dashed border-gray-400 rounded-md text-gray-500 text-sm bg-gray-50">
+      <p className="font-medium text-gray-700">${stub.name}</p>
+      <p>このセクションは準備中です。生成に失敗したため自動的にプレースホルダーが挿入されました。</p>
+    </section>
+  );
+}
+`;
+              const dirPath = stub.path.includes('/') ? stub.path.substring(0, stub.path.lastIndexOf('/')) : '';
+              if (dirPath) {
+                await providerInstance.runCommand(`mkdir -p ${dirPath}`);
+              }
+              await providerInstance.writeFile(stub.path, stubContent);
+              if (results.filesCreated) results.filesCreated.push(stub.path);
+              if (global.existingFiles) global.existingFiles.add(stub.path);
+              await sendProgress({ type: 'file-complete', fileName: stub.path, action: 'created' });
+              console.log(`[apply-ai-code-stream] Stubbed missing component: ${stub.path}`);
+            }
+
+            if (missingStubs.length > 0) {
+              console.warn(
+                `[apply-ai-code-stream] Created ${missingStubs.length} stub(s) for missing imports: ${missingStubs.map((s) => s.path).join(', ')}`,
+              );
+            }
+          }
+        } catch (stubError) {
+          console.error('[apply-ai-code-stream] Stub generation failed:', stubError);
+        }
+
         // Step 3: Execute commands
         const commandsArray = Array.isArray(parsed.commands) ? parsed.commands : [];
         if (commandsArray.length > 0) {
